@@ -1,0 +1,192 @@
+# keymap.keymap.yaml
+keymap:
+  base:
+    - &kp Q W E R T Y U I O P
+    - &kp LGUI_A LALT_S LCTL_D LSFT_F G H RSFT_J RCTL_K RALT_L RGUI_QUOT
+    - &kp Z X C V B N M MINUS DOT SLASH
+    - &layer_macro LT_MACRO_BSPC LT_NAV_SPC LT_SYM_ENT LT_NUM_ESC
+
+  graphite:
+    - &kp B L D W Z QUOT F O U J
+    - &kp LGUI_N LALT_R LCTL_T LSFT_S G Y RSFT_H RCTL_A RALT_E RGUI_I
+    - &kp Q X M C V K P COMMA DOT SLASH
+    - &layer_macro LT_MACRO_BSPC LT_NAV_SPC LT_SYM_ENT LT_NUM_ESC
+
+  nav:
+    - &kp TRNS MPRV VOLU MNXT ACL0 TRNS BTN1 WH_U BTN2 TRNS
+    - &kp TRNS BTN2 MUTE BTN1 ACL1 MS_L MS_D MS_U MS_R TRNS
+    - &kp TRNS BTN3 VOLD MPLY ACL2 TRNS WH_L WH_D WH_R TRNS
+    - &layer_macro BTN3 TRNS BTN1 BTN2
+
+  sym:
+    - &kp GRV ASTR EQL EXLM CIRC QUOT DQUO PERC BSLS TILD
+    - &kp 0 LBRC LCBR LPRN UNDERSCORE MINUS RPRN RCBR RBRC DLR
+    - &kp HASH AMPR AT LT ALGR_SLASH EQL GT COMMA DOT SCLN
+    - &layer_macro LSFT TAB TRNS TRNS
+
+  macro:
+    - &vim_quit &kp C LCTL_U &vim_start &macro_pass &vim_redo &vim_lsp_ren &vim_comment &vim_lsp_doc TRNS
+    - &kp 0 &kp B &kp W &kp E DLR LSFT_N &vim_lsp_def &vim_change_word &vim_lsp_ref TRNS
+    - &macro_email &kp D LCTL_D LSFT_G &macro_epass &kp_N TRNS LSFT_COMMA LSFT_DOT &macro_enumber
+    - &layer_macro TRNS TRNS ESC X
+
+  num:
+    - &td_td_eql_f12 &td_td_7_f7 &td_td_8_f8 &td_td_9_f9 PPLS TRNS HOME PGUP INS TRNS
+    - &td_td_mins_f11 &td_td_4_f4 &td_td_5_f5 &td_td_6_f6 PMNS LEFT DOWN UP RGHT TRNS
+    - &td_td_0_f10 &td_td_1_f1 &td_td_2_f2 &td_td_3_f3 PEQL TRNS END PGDN TRNS QK_BOOT
+    - &layer_macro DEL 0 TRNS TRNS
+
+behaviors:
+  # Tap Dance
+  td_1_f1:
+    compatible: zmk,tap-dance
+    tapping-singles: [1]
+    tapping-doubles: [F1]
+
+  td_2_f2:
+    compatible: zmk,tap-dance
+    tapping-singles: [2]
+    tapping-doubles: [F2]
+
+  td_3_f3:
+    compatible: zmk,tap-dance
+    tapping-singles: [3]
+    tapping-doubles: [F3]
+
+  td_4_f4:
+    compatible: zmk,tap-dance
+    tapping-singles: [4]
+    tapping-doubles: [F4]
+
+  td_5_f5:
+    compatible: zmk,tap-dance
+    tapping-singles: [5]
+    tapping-doubles: [F5]
+
+  td_6_f6:
+    compatible: zmk,tap-dance
+    tapping-singles: [6]
+    tapping-doubles: [F6]
+
+  td_7_f7:
+    compatible: zmk,tap-dance
+    tapping-singles: [7]
+    tapping-doubles: [F7]
+
+  td_8_f8:
+    compatible: zmk,tap-dance
+    tapping-singles: [8]
+    tapping-doubles: [F8]
+
+  td_9_f9:
+    compatible: zmk,tap-dance
+    tapping-singles: [9]
+    tapping-doubles: [F9]
+
+  td_0_f10:
+    compatible: zmk,tap-dance
+    tapping-singles: [0]
+    tapping-doubles: [F10]
+
+  td_mins_f11:
+    compatible: zmk,tap-dance
+    tapping-singles: [MINUS]
+    tapping-doubles: [F11]
+
+  td_eql_f12:
+    compatible: zmk,tap-dance
+    tapping-singles: [EQL]
+    tapping-doubles: [F12]
+
+  # Macros
+  vim_quit:
+    compatible: zmk,behavior-macro
+    label: VIM_QUIT
+    value: ":q"
+
+  vim_lsp_def:
+    compatible: zmk,behavior-macro
+    label: VIM_LSP_DEF
+    value: "gd"
+
+  vim_lsp_ref:
+    compatible: zmk,behavior-macro
+    label: VIM_LSP_REF
+    value: "gr"
+
+  vim_lsp_ren:
+    compatible: zmk,behavior-macro
+    label: VIM_LSP_REN
+    value: "<space>rn"
+
+  vim_lsp_doc:
+    compatible: zmk,behavior-macro
+    label: VIM_LSP_DOC
+    value: "K"
+
+  vim_comment:
+    compatible: zmk,behavior-macro
+    label: VIM_COMMENT
+    value: "gcc"
+
+  vim_redo:
+    compatible: zmk,behavior-macro
+    label: VIM_REDO
+    value: "<ctrl>r"
+
+  vim_start:
+    compatible: zmk,behavior-macro
+    label: VIM_START
+    value: "gg"
+
+  vim_change_word:
+    compatible: zmk,behavior-macro
+    label: VIM_CHANGE_WORD
+    value: "cw"
+
+  vim_change_eol:
+    compatible: zmk,behavior-macro
+    label: VIM_CHANGE_EOL
+    value: "c$"
+
+  vim_change_sol:
+    compatible: zmk,behavior-macro
+    label: VIM_CHANGE_SOL
+    value: "c0"
+
+  macro_email:
+    compatible: zmk,behavior-macro
+    label: MACRO_EMAIL
+    value: "email"
+
+  macro_pass:
+    compatible: zmk,behavior-macro
+    label: MACRO_PASS
+    value: "password"
+
+  macro_enumber:
+    compatible: zmk,behavior-macro
+    label: MACRO_ENUMBER
+    value: "enumber"
+
+  macro_epass:
+    compatible: zmk,behavior-macro
+    label: MACRO_EPASS
+    value: "epassword"
+
+combos:
+  sdf_tab:
+    - &lalt_s &lctl_d &lsft_f
+    - bindings: [TAB]
+
+  jkl_enter:
+    - &rsft_j &rctl_k &ralt_l
+    - bindings: [ENTER]
+
+  rts_tab:
+    - &lalt_r &lctl_t &lsft_s
+    - bindings: [TAB]
+
+  hae_enter:
+    - &rsft_h &rctl_a &ralt_e
+    - bindings: [ENTER]

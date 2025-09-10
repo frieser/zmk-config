@@ -21,9 +21,11 @@
 include:
   # Use cornix without dongle
   - board: cornix_left
+    keymap: frieser
     artifact-name: cornix_left
 
   - board: cornix_right
+    keymap: frieser
     artifact-name: cornix_right
 
   - board: cornix_right
