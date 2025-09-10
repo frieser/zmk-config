@@ -1,0 +1,28 @@
+# Zephyr / ZMK build artifacts
+build/
+cmake_cache.txt
+
+# WEST
+.west/
+zephyr/
+
+# Python
+*.pyc
+__pycache__/
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.DS_Store
+
+# Generated files
+zephyr/version.h
+zephyr/zephyr-env.sh # opcional, se puede generar localmente
+
+# Modules / helper repos (si los descargas con west)
+zmk-helpers/
+zmk-keyboard-cornix/
+zmk
+
+modules/
