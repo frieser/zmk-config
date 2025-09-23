@@ -10,23 +10,34 @@ manifest:
       url-base: https://github.com/hitsmaxft
     - name: urob
       url-base: https://github.com/urob
+    - name: carrefinho
+      url-base: https://github.com/carrefinho
+    - name: caksoylar
+      url-base: https://github.com/caksoylar
   projects:
     - name: zmk
-      remote: zmkfirmware
       import: app/west.yml
+      revision: main
+      remote: zmkfirmware
     - name: zmk-keyboard-cornix
       remote: hitsmaxft
       revision: main
     - name: zmk-helpers
       remote: urob
       revision: main
-    - name: zmk-rgbled-widget
-      remote: hitsmaxft
-      revision: main
-      clone-depth: 1
+    # - name: zmk-rgbled-widget
+    #   remote: hitsmaxft
+    #   revision: main
+    #   clone-depth: 1
     - name: zmk-dongle-display
       remote: hitsmaxft
       revision: main
       clone-depth: 1
+    - name: forager-zmk-module
+      remote: carrefinho
+      revision: main
+    - name: zmk-rgbled-widget
+      remote: caksoylar
+      revision: main
   self:
     path: config

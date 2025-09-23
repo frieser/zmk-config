@@ -1,5 +1,8 @@
 # Zephyr / ZMK build artifacts
 build/
+builds/
+firmwares/
+*zmk*
 cmake_cache.txt
 
 # WEST
