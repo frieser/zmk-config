@@ -6,6 +6,8 @@ set -euo pipefail
 BUILD_DIR="builds"
 FIRMWARE_OUT="firmwares"
 
+rm -rf .west
+
 # Ensure required dirs exist before entering container
 mkdir -p "$BUILD_DIR" "$FIRMWARE_OUT"
 
