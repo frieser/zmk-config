@@ -1,0 +1,7 @@
+// Layers
+#define BASE 0
+#define SYMBOL 1
+#define NAVI   2
+#define NUM    3
+#define MACRO  4
+#define DEBUG  5

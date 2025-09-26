@@ -52,13 +52,13 @@ west build -p -s \$ZMK_APP_PATH -b cornix_right -d \$BUILD_DIR/cornix_right \\
 west build -p -s \$ZMK_APP_PATH -b cornix_right -d \$BUILD_DIR/reset \\
   -- -DSHIELD=\"settings_reset\" -DKEYMAP_FILE=\$KEYMAP_CORNIX
 
-west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/seeeduino_xiao_ble_forager_left_rgbled_adapter \\
+west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_forager_left_rgbled_adapter \\
   -- -DSHIELD=\"forager_left rgbled_adapter\" -DSNIPPET=\"studio-rpc-usb-uart\" -DKEYMAP_FILE=\$KEYMAP_FORAGER
 
-west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/seeeduino_xiao_ble_forager_right_rgbled_adapter \\
+west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_forager_right_rgbled_adapter \\
   -- -DSHIELD=\"forager_right rgbled_adapter\" -DKEYMAP_FILE=\$KEYMAP_FORAGER
 
-west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/seeeduino_xiao_ble_settings_reset \\
+west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_settings_reset \\
   -- -DSHIELD=\"settings_reset\" -DKEYMAP_FILE=\$KEYMAP_FORAGER
 
 # Collect firmware output

@@ -14,6 +14,9 @@ manifest:
       url-base: https://github.com/carrefinho
     - name: caksoylar
       url-base: https://github.com/caksoylar
+    # Urchin keeb
+    - name: duckyb
+      url-base: https://github.com/duckyb
   projects:
     - name: zmk
       import: app/west.yml
@@ -38,6 +41,9 @@ manifest:
       revision: main
     - name: zmk-rgbled-widget
       remote: caksoylar
+      revision: main
+    - name: urchin-zmk-module
+      remote: duckyb
       revision: main
   self:
     path: config
