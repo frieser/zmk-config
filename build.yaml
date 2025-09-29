@@ -19,24 +19,24 @@ include:
     artifact-name: cornix_right
 
     # Forager
-  - board: seeed_xiao_ble
+  - board: seeeduino_xiao_ble
     # shield: forager_dongle rgbled_adapter
     shield: forager_dongle
     snippet: studio-rpc-usb-uart
     cmake-args: -DCONFIG_ZMK_STUDIO=y
     artifact-name: forager_dongle
 
-  - board: seeed_xiao_ble
+  - board: seeeduino_xiao_ble
     shield: forager_left
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
     artifact-name: forager_left_peripheral
 
-  - board: seeed_xiao_ble
+  - board: seeeduino_xiao_ble
     shield: forager_left
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
     artifact-name: forager_left_central
 
-  - board: seeed_xiao_ble
+  - board: seeeduino_xiao_ble
     shield: forager_right
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
     artifact-name: forager_right
@@ -73,7 +73,4 @@ include:
     shield: settings_reset
 
   - board: seeeduino_xiao_ble
-    shield: settings_reset
-
-  - board: seeed_xiao_nrf52840
     shield: settings_reset
