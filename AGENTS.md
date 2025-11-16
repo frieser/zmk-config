@@ -1,0 +1,21 @@
+# AGENTS.md for ZMK Config Repository
+
+## Build Commands
+- Full build: `bash build-all.sh` (builds all keyboard variants using podman and west)
+- Single board build: `west build -p -s zmk/app -b <board> -d builds/<name> -- -DSHIELD="<shields>" -DKEYMAP_FILE=config/<keymap>`
+
+## Lint/Test Commands
+- No automated tests; manual testing required on hardware
+- Lint DTS: Use `dtc -I dts -O dtb <file>.dtsi` to check syntax
+- Run single "test": Flash firmware and verify keymap on keyboard
+
+## Code Style Guidelines
+- **File Structure**: Use .dtsi includes for behaviors, layers, macros; .keymap for bindings
+- **Naming**: snake_case for behavior names, macros, layers; UPPER_CASE for defines
+- **Formatting**: 4-space indentation; align bindings in columns; use < > for key codes
+- **Imports**: #include relative paths; order: behaviors.dtsi, layers.dtsi, etc.
+- **Types**: Use compatible strings like "zmk,behavior-hold-tap"; #binding-cells as needed
+- **Error Handling**: Validate DTS with dtc; test behaviors on actual hardware
+- **Comments**: Use // for single-line; document complex behaviors/macros
+- **Keymaps**: Group by layers; use LAYER_FROMXX macros for readability
+- **Conventions**: Follow ZMK docs; use positional hold-taps for home rows; avoid magic numbers
