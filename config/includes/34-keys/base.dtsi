@@ -24,8 +24,8 @@
 
             bindings = <LAYER_FROM34( \
 &kp Q,          &kp W,         &kp E,          &kp R,                &kp T,          &kp Y,         &kp U,                &kp I,            &kp O,         &kp P,
-&hm_l LGUI A,   &hm_l LALT S,  &hm_l LCTRL D,  &hm_shift_l LSHFT F,  &kp G,          &kp H,         &hm_shift_r RSHFT J,  &hm_r RCTRL K,    &hm_r RALT L,  &hm_r_macro RGUI,
-&hm_l LGUI Z,   &kp X,         &kp C,          &kp V,                &kp B,          &kp N,         &kp M,                &mm_minus_pipe,   &mm_dot_comma, &kp FSLH,
+&hm_l LGUI A,   &hm_l LALT S,  &hm_l LCTRL D,  &hm_shift_l LSHFT F,  &kp G,          &kp H,         &hm_shift_r RSHFT J,  &hm_r RCTRL K,    &hm_r RALT L,  &mm_quote_colon,
+&hm_l LGUI Z,   &kp X,         &kp C,          &kp V,                &kp B,          &kp N,         &kp M,                &mm_minus_pipe,   &mm_dot_comma, &hm_r RGUI FSLH,
                                 &lt MACRO BACKSPACE,      &lt NAVI SPACE,                &lt SYMBOL ENTER,   &lt NUM ESCAPE
             )>;
         };

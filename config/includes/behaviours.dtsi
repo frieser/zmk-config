@@ -56,25 +56,6 @@
             hold-trigger-key-positions = <KEYS_L THUMBS>;
             hold-trigger-on-release;
         };
-         mm_quote_colon_macro: mm_quote_colon_macro {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            bindings = < &mm_quote_colon >; /* invoca el mod-morph preexistente */
-        };
-
-        /* hold-tap personalizado: hold = &kp (RGUI), tap = macro (que a su vez ejecuta mod-morph) */
-        hm_r_macro: hm_r_macro {
-            compatible = "zmk,behavior-hold-tap";
-            #binding-cells = <2>;
-            bindings = <&kp>, <&mm_quote_colon_macro>;
-
-            flavor = "balanced";
-            tapping-term-ms = <HM_TAPPING_TERM>;
-            quick-tap-ms = <200>;
-            require-prior-idle-ms = <HM_PRIOR_IDLE>;
-            hold-trigger-key-positions = <KEYS_L THUMBS>;
-            hold-trigger-on-release;
-        };
 
         // Positional Homerow mods for shift
         // Use faster tapping term and disable some features that may
