@@ -1,24 +1,24 @@
 ---
 include:
-  # Cornix
-  - board: cornix_dongle
-    shield: cornix_dongle_eyelash dongle_display
-    snippet: studio-rpc-usb-uart
-    artifact-name: cornix_dongle
+  # # Cornix
+  # - board: cornix_dongle
+  #   shield: cornix_dongle_eyelash dongle_display
+  #   snippet: studio-rpc-usb-uart
+  #   artifact-name: cornix_dongle
+  #
+  # - board: cornix_left
+  #   #shield: cornix_indicator
+  #   artifact-name: cornix_left_default
+  #
+  # - board: cornix_ph_left
+  #   #shield: cornix_indicator
+  #   artifact-name: cornix_left_for_dongle
+  #
+  # - board: cornix_right
+  #   #shield: cornix_indicator
+  #   artifact-name: cornix_right
 
-  - board: cornix_left
-    #shield: cornix_indicator
-    artifact-name: cornix_left_default
-
-  - board: cornix_ph_left
-    #shield: cornix_indicator
-    artifact-name: cornix_left_for_dongle
-
-  - board: cornix_right
-    #shield: cornix_indicator
-    artifact-name: cornix_right
-
-    # Forager
+  # Forager
   - board: seeeduino_xiao_ble
     # shield: forager_dongle rgbled_adapter
     shield: forager_dongle
@@ -41,36 +41,36 @@ include:
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
     artifact-name: forager_right
 
-  # Urchin
-  - board: seeeduino_xiao_ble
-    shield: urchin_dongle rgbled_adapter
-    snippet: studio-rpc-usb-uart
-    cmake-args: -DCONFIG_ZMK_STUDIO=y
-    artifact-name: urchin_dongle
-
-  - board: nice_nano_v2
-    shield: urchin_left
-    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-    artifact-name: urchin_left_peripheral
-
-  - board: nice_nano_v2
-    shield: urchin_left
-    snippet: studio-rpc-usb-uart
-    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
-    artifact-name: urchin_left_central
-
-  - board: nice_nano_v2
-    shield: urchin_right
-    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-    artifact-name: urchin_right
-
+  # # Urchin
+  # - board: seeeduino_xiao_ble
+  #   shield: urchin_dongle rgbled_adapter
+  #   snippet: studio-rpc-usb-uart
+  #   cmake-args: -DCONFIG_ZMK_STUDIO=y
+  #   artifact-name: urchin_dongle
+  #
+  # - board: nice_nano_v2
+  #   shield: urchin_left
+  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+  #   artifact-name: urchin_left_peripheral
+  #
+  # - board: nice_nano_v2
+  #   shield: urchin_left
+  #   snippet: studio-rpc-usb-uart
+  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
+  #   artifact-name: urchin_left_central
+  #
+  # - board: nice_nano_v2
+  #   shield: urchin_right
+  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+  #   artifact-name: urchin_right
+  #
   # Reset shields
-  - board: cornix_right
-    shield: settings_reset
-    artifact-name: cornix_reset
-
-  - board: nice_nano_v2
-    shield: settings_reset
+  # - board: cornix_right
+  #   shield: settings_reset
+  #   artifact-name: cornix_reset
+  #
+  # - board: nice_nano_v2
+  #   shield: settings_reset
 
   - board: seeeduino_xiao_ble
     shield: settings_reset
