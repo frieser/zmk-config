@@ -56,10 +56,17 @@
             hold-trigger-key-positions = <KEYS_L THUMBS>;
             hold-trigger-on-release;
         };
+        passthrough: passthrough {
+            compatible = "zmk,behavior-none";
+            #binding-cells = <0>;
+        };
         hm_r_morph: hm_r_morph {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
-            bindings = <&kp>, <&none>;  // luego el tap lo pasamos como parámetro
+
+            // HOLD = keycode
+            // TAP = behaviour pasado desde keymap
+            bindings = <&kp>, <&passthrough>;
 
             flavor = "balanced";
             tapping-term-ms = <HM_TAPPING_TERM>;
