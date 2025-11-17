@@ -56,17 +56,17 @@
             hold-trigger-key-positions = <KEYS_L THUMBS>;
             hold-trigger-on-release;
         };
-        passthrough: passthrough {
-            compatible = "zmk,behavior-none";
+         mm_quote_colon_macro: mm_quote_colon_macro {
+            compatible = "zmk,behavior-macro";
             #binding-cells = <0>;
+            bindings = < &mm_quote_colon >; /* invoca el mod-morph preexistente */
         };
-        hm_r_morph: hm_r_morph {
+
+        /* hold-tap personalizado: hold = &kp (RGUI), tap = macro (que a su vez ejecuta mod-morph) */
+        hm_r_macro: hm_r_macro {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
-
-            // HOLD = keycode
-            // TAP = behaviour pasado desde keymap
-            bindings = <&kp>, <&passthrough>;
+            bindings = <&kp>, <&mm_quote_colon_macro>;
 
             flavor = "balanced";
             tapping-term-ms = <HM_TAPPING_TERM>;
