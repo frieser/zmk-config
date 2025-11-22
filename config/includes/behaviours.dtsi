@@ -31,6 +31,18 @@
             bindings = <&kp SQT>, <&kp COLON>;
             mods = <(MOD_LSFT|MOD_RSFT)>;
         };
+        hm_quote_super: hm_quote_super {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            bindings = <&kp>, <&mm_quote_colon>;
+
+            flavor = "balanced";
+            tapping-term-ms = <HM_TAPPING_TERM>;
+            quick-tap-ms = <200>;
+            require-prior-idle-ms = <HM_PRIOR_IDLE>;
+            hold-trigger-key-positions = <KEYS_L THUMBS>;
+            hold-trigger-on-release;
+        };
         hm_l: homerow_mods_left {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;

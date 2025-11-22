@@ -22,7 +22,7 @@
 
             bindings = <LAYER_FROM50( \
 &kp TAB,  &kp Q,          &kp W,         &kp E,          &kp R,                &kp T,                      &kp Y,         &kp U,                &kp I,            &kp O,         &kp P,             &kp BSLH,
-&kp ESC,  &hm_l LGUI A,   &hm_l LALT S,  &hm_l LCTRL D,  &hm_shift_l LSHFT F,  &kp G,                      &kp H,         &hm_shift_r RSHFT J,  &hm_r RCTRL K,    &hm_r RALT L,  &mm_quote_colon,   &kp SQT,
+&kp ESC,  &hm_l LGUI A,   &hm_l LALT S,  &hm_l LCTRL D,  &hm_shift_l LSHFT F,  &kp G,                      &kp H,         &hm_shift_r RSHFT J,  &hm_r RCTRL K,    &hm_r RALT L,  &hm_quote_super RGUI 0,   &kp SQT,
 &mo MACRO,    &hm_l LGUI Z,   &kp X,         &kp C,          &kp V,                &kp B,        &none,  &none,  &kp N,         &kp M,                &mm_minus_pipe,   &mm_dot_comma, &hm_l RGUI FSLH,   &kp BACKSPACE,
 &none,    &none,          &none,         &kp ESCAPE,     &lt MACRO BACKSPACE,      &lt NAVI SPACE,                &lt SYMBOL ENTER,   &lt NUM ESCAPE,         &lt 5 BACKSPACE,  &none,         &none,             &none
             )>;
