@@ -54,10 +54,10 @@
         KeyPad_layer {
             display-name = "NumPad";
             bindings = <LAYER_FROM34( \
-&none,   &kp N7,      &kp N8,  &kp N9,   &kp KP_PLUS,                        &none,           &kp HOME,        &kp PAGE_UP,     &kp INSERT,       &none,            
-&none,   &kp N4,      &kp N5,  &kp N6,   &kp KP_MINUS,                       &kp LEFT_ARROW,  &kp DOWN_ARROW,  &kp UP_ARROW,    &kp RIGHT_ARROW,  &none,            
-&kp N0,   &kp N1,      &kp N2,  &kp N3,   &kp KP_MULTIPLY,   &none,           &kp END,         &kp PAGE_DOWN,   &trans,           &kp C_RESET,      
-                       &kp DEL,  &kp N0,                             &none,           &none
+&kp F12, &td7,    &td8,    &td9,    &kp KP_PLUS,                        &none,           &kp HOME,        &kp PAGE_UP,     &kp INSERT,       &none,            
+&kp F11, &td4,    &td5,    &td6,    &kp KP_MINUS,                       &kp LEFT_ARROW,  &kp DOWN_ARROW,  &kp UP_ARROW,    &kp RIGHT_ARROW,  &none,            
+&td0,    &td1,    &td2,    &td3,    &kp KP_MULTIPLY,   &none,           &kp END,         &kp PAGE_DOWN,   &trans,           &kp C_RESET,      
+                        &kp DEL,  &td0,                             &none,           &none
             )>;
         };
         Macro_layer {
