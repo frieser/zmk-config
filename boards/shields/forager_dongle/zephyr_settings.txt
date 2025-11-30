@@ -1,0 +1,23 @@
+# WARNING. THIS FILE IS AUTO-GENERATED. DO NOT MODIFY!
+#
+# This file contains build system settings derived from your modules.
+#
+# Modules may be set via ZEPHYR_MODULES, ZEPHYR_EXTRA_MODULES,
+# and/or the west manifest file.
+#
+# See the Modules guide for more information.
+"BOARD_ROOT":"/zmk-config/config"
+"BOARD_ROOT":"/zmk-config/zmk-keyboard-cornix"
+"SNIPPET_ROOT":"/zmk-config/zmk-keyboard-cornix"
+"DTS_ROOT":"/zmk-config/zmk-helpers"
+"BOARD_ROOT":"/zmk-config/zmk-dongle-display"
+"BOARD_ROOT":"/zmk-config/forager-zmk-module"
+"BOARD_ROOT":"/zmk-config/zmk-rgbled-widget"
+"DTS_ROOT":"/zmk-config/zmk-rgbled-widget"
+"DTS_ROOT":"/zmk-config/modules/hal/atmel"
+"DTS_ROOT":"/zmk-config/modules/hal/espressif"
+"DTS_ROOT":"/zmk-config/modules/hal/gigadevice"
+"DTS_ROOT":"/zmk-config/modules/hal/nuvoton"
+"DTS_ROOT":"/zmk-config/modules/hal/stm32"
+"DTS_ROOT":"/zmk-config/zmk/app/module"
+"MODULE_EXT_ROOT":"/zmk-config/zmk/app/keymap-module"

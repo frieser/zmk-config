@@ -38,33 +38,36 @@ west zephyr-export
 # Build all firmware targets
 echo '🛠️  Building firmware targets...'
 
-west build -p -s \$ZMK_APP_PATH -b cornix_dongle -d \$BUILD_DIR/cornix_dongle \\
-  -- -DSHIELD=\"cornix_dongle_eyelash dongle_display\" -DSNIPPET=\"studio-rpc-usb-uart\" -DKEYMAP_FILE=\$KEYMAP_CORNIX
+# west build -p -s \$ZMK_APP_PATH -b cornix_dongle -d \$BUILD_DIR/cornix_dongle \\
+#   -- -DSHIELD=\"cornix_dongle_eyelash dongle_display\" -DSNIPPET=\"studio-rpc-usb-uart\" -DKEYMAP_FILE=\$KEYMAP_CORNIX
+#
+# west build -p -s \$ZMK_APP_PATH -b cornix_left -d \$BUILD_DIR/cornix_left_default \\
+#   -- -DKEYMAP_FILE=\$KEYMAP_CORNIX
+#
+# west build -p -s \$ZMK_APP_PATH -b cornix_ph_left -d \$BUILD_DIR/cornix_left_for_dongle \\
+#   -- -DKEYMAP_FILE=\$KEYMAP_CORNIX
+#
+# west build -p -s \$ZMK_APP_PATH -b cornix_right -d \$BUILD_DIR/cornix_right \\
+#   -- -DKEYMAP_FILE=\$KEYMAP_CORNIX
+#
+# west build -p -s \$ZMK_APP_PATH -b cornix_right -d \$BUILD_DIR/reset \\
+#   -- -DSHIELD=\"settings_reset\" -DKEYMAP_FILE=\$KEYMAP_CORNIX
 
-west build -p -s \$ZMK_APP_PATH -b cornix_left -d \$BUILD_DIR/cornix_left_default \\
-  -- -DKEYMAP_FILE=\$KEYMAP_CORNIX
-
-west build -p -s \$ZMK_APP_PATH -b cornix_ph_left -d \$BUILD_DIR/cornix_left_for_dongle \\
-  -- -DKEYMAP_FILE=\$KEYMAP_CORNIX
-
-west build -p -s \$ZMK_APP_PATH -b cornix_right -d \$BUILD_DIR/cornix_right \\
-  -- -DKEYMAP_FILE=\$KEYMAP_CORNIX
-
-west build -p -s \$ZMK_APP_PATH -b cornix_right -d \$BUILD_DIR/reset \\
-  -- -DSHIELD=\"settings_reset\" -DKEYMAP_FILE=\$KEYMAP_CORNIX
+west build -p -s \$ZMK_APP_PATH -b nice_nano_v2 -d \$BUILD_DIR/forager_dongle \\
+  -- -DSHIELD=\"forager_dongle dongle_display\" -DKEYMAP_FILE=\$KEYMAP_FORAGER -DBOARD_ROOT=\"/zmk-config\"
 
 west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_forager_left_rgbled_adapter \\
   -- -DSHIELD=\"forager_left rgbled_adapter\" -DSNIPPET=\"studio-rpc-usb-uart\" -DKEYMAP_FILE=\$KEYMAP_FORAGER
 
 west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_forager_right_rgbled_adapter \\
   -- -DSHIELD=\"forager_right rgbled_adapter\" -DKEYMAP_FILE=\$KEYMAP_FORAGER
-
-west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/totem_left \\
-  -- -DSHIELD=\"totem_left\" -DKEYMAP_FILE=\$KEYMAP_TOTEM -DBOARD_ROOT=\"/zmk-config/zmk-config-totem/config\" -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
-
-west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/totem_right \\
-  -- -DSHIELD=\"totem_right\" -DKEYMAP_FILE=\$KEYMAP_TOTEM -DBOARD_ROOT=\"/zmk-config/zmk-config-totem/config\" -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-
+#
+# west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/totem_left \\
+#   -- -DSHIELD=\"totem_left\" -DKEYMAP_FILE=\$KEYMAP_TOTEM -DBOARD_ROOT=\"/zmk-config/zmk-config-totem/config\" -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
+#
+# west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/totem_right \\
+#   -- -DSHIELD=\"totem_right\" -DKEYMAP_FILE=\$KEYMAP_TOTEM -DBOARD_ROOT=\"/zmk-config/zmk-config-totem/config\" -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
+#
 west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_settings_reset \\
   -- -DSHIELD=\"settings_reset\" -DKEYMAP_FILE=\$KEYMAP_FORAGER
 
