@@ -22,9 +22,10 @@ podman run -it --rm --security-opt label=disable \
 set -euo pipefail
 
 # Variables inside container
-KEYMAP_CORNIX=\"/zmk-config/config/cornix.keymap\"
-KEYMAP_FORAGER=\"/zmk-config/config/forager.keymap\"
-ZMK_APP_PATH=\"zmk/app\"
+KEYMAP_CORNIX="/zmk-config/config/cornix.keymap"
+KEYMAP_FORAGER="/zmk-config/config/forager.keymap"
+KEYMAP_TOTEM="/zmk-config/config/totem.keymap"
+ZMK_APP_PATH="zmk/app"
 BUILD_DIR=\"builds\"
 FIRMWARE_OUT=\"firmwares\"
 
@@ -57,6 +58,12 @@ west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BU
 
 west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_forager_right_rgbled_adapter \\
   -- -DSHIELD=\"forager_right rgbled_adapter\" -DKEYMAP_FILE=\$KEYMAP_FORAGER
+
+west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/totem_left \\
+  -- -DSHIELD=\"totem_left\" -DKEYMAP_FILE=\$KEYMAP_TOTEM -DBOARD_ROOT=\"/zmk-config/zmk-config-totem/config\" -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
+
+west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -d \$BUILD_DIR/totem_right \\
+  -- -DSHIELD=\"totem_right\" -DKEYMAP_FILE=\$KEYMAP_TOTEM -DBOARD_ROOT=\"/zmk-config/zmk-config-totem/config\" -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
 
 west build -p -s \$ZMK_APP_PATH -b seeeduino_xiao_ble -S zmk-usb-logging -d \$BUILD_DIR/seeeduino_xiao_ble_settings_reset \\
   -- -DSHIELD=\"settings_reset\" -DKEYMAP_FILE=\$KEYMAP_FORAGER

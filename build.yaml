@@ -64,6 +64,17 @@ include:
   #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
   #   artifact-name: urchin_right
 
+  # Totem
+  - board: seeeduino_xiao_ble
+    shield: totem_left
+    artifact-name: totem_left
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y -DBOARD_ROOT="../../zmk-config-totem/config"
+
+  - board: seeeduino_xiao_ble
+    shield: totem_right
+    artifact-name: totem_right
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DBOARD_ROOT="../../zmk-config-totem/config"
+
   # Reset shields
   - board: cornix_right
     shield: settings_reset
