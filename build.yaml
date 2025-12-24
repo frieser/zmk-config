@@ -1,11 +1,6 @@
 ---
 include:
   # Cornix
-  - board: cornix_dongle
-    shield: cornix_dongle_eyelash dongle_display
-    snippet: studio-rpc-usb-uart
-    artifact-name: cornix_dongle
-
   - board: cornix_left
     artifact-name: cornix_left_default
 
@@ -15,44 +10,18 @@ include:
   - board: cornix_right
     artifact-name: cornix_right
 
-  # # Forager
-  # - board: seeeduino_xiao_ble
-  #   shield: forager_dongle dongle_display
-  #   artifact-name: forager_dongle
-  #
-  # - board: seeeduino_xiao_ble
-  #   shield: forager_left
-  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-  #   artifact-name: forager_left_peripheral
-  #
-  # - board: seeeduino_xiao_ble
-  #   shield: forager_left
-  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y
-  #   artifact-name: forager_left_central
-  #
-  # - board: seeeduino_xiao_ble
-  #   shield: forager_right
-  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
-  #   artifact-name: forager_right
-  #
-  # # Totem
-  # - board: seeeduino_xiao_ble
-  #   shield: totem_left
-  #   artifact-name: totem_left
-  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y -DBOARD_ROOT="../../zmk-config-totem/config"
-  #
-  # - board: seeeduino_xiao_ble
-  #   shield: totem_right
-  #   artifact-name: totem_right
-  #   cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DBOARD_ROOT="../../zmk-config-totem/config"
-  #
+  # Totem
+  - board: seeeduino_xiao
+    shield: totem_left
+    artifact-name: totem_left
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y"
+
+  - board: seeeduino_xiao
+    shield: totem_right
+    artifact-name: totem_right
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n"
+
   # Reset shields
   - board: cornix_right
     shield: settings_reset
     artifact-name: cornix_reset
-
-  - board: nice_nano_v2
-    shield: settings_reset
-
-  - board: seeeduino_xiao_ble
-    shield: settings_reset
