@@ -12,7 +12,6 @@ manifest:
       url-base: https://github.com/carrefinho
     - name: caksoylar
       url-base: https://github.com/caksoylar
-    # Totem
     - name: GEIGEIGEIST
       url-base: https://github.com/GEIGEIGEIST
   projects:
@@ -39,5 +38,3 @@ manifest:
     - name: zmk-config-totem
       remote: GEIGEIGEIST
       revision: master
-  self:
-    path: config
