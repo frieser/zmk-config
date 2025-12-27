@@ -20,7 +20,16 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 # AGENTS.md for ZMK Config Repository
 
 ## Build Commands
-- Full build: `bash build-all.sh` (builds all keyboard variants using podman and west)
+- **Para probar todas las funcionalidades y compilar todos los firmwares de los teclados ZMK**: `bash build-all.sh`
+  - Este es el comando principal que compila todas las variantes de teclado usando podman y west
+  - **IMPORTANTE**: Este script tarda varios minutos en completarse
+  - Debe ejecutarse en background de forma asincrónica (usando tmux/interactive_bash o herramientas de background)
+  - Comprobar el estado de forma asincrónica durante la ejecución
+  - **SINCRONIZACIÓN CRÍTICA**: El script `build-all.sh` y el archivo `build.yaml` deben estar sincronizados
+    - Ambos deben compilar exactamente las mismas configuraciones de teclados
+    - `build.yaml` se usa en GitHub Actions
+    - `build-all.sh` lee el `build.yaml` y replica las mismas compilaciones localmente
+    - Cualquier cambio en las configuraciones debe reflejarse en ambos archivos
 - Single board build: `west build -p -s zmk/app -b <board> -d builds/<name> -- -DSHIELD="<shields>" -DKEYMAP_FILE=config/<keymap>`
 
 ## Lint/Test Commands
