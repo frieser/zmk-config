@@ -26,6 +26,27 @@ include:
     artifact-name: totem_left_for_dongle
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DBOARD_ROOT="../../zmk-config-totem/config"
 
+  # Forager
+  - board: seeeduino_xiao_ble
+    shield: forager_left
+    artifact-name: forager_left
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y -DBOARD_ROOT="../../forager-zmk-module"
+
+  - board: seeeduino_xiao_ble
+    shield: forager_right
+    artifact-name: forager_right
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DBOARD_ROOT="../../forager-zmk-module"
+
+  - board: seeeduino_xiao_ble
+    shield: forager_left
+    artifact-name: forager_left_for_dongle
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DBOARD_ROOT="../../forager-zmk-module"
+
+  - board: seeeduino_xiao_ble
+    shield: forager_dongle
+    artifact-name: forager_dongle
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=y -DBOARD_ROOT="../../"
+
   # Reset shields
   - board: cornix_right
     shield: settings_reset
@@ -34,3 +55,7 @@ include:
   - board: seeeduino_xiao
     shield: settings_reset
     artifact-name: totem_reset
+
+  - board: seeeduino_xiao_ble
+    shield: settings_reset
+    artifact-name: forager_reset

@@ -45,6 +45,8 @@ for target in config.get('include', []):
         keymap = '/zmk-config/config/cornix.keymap'
     elif 'totem' in artifact:
         keymap = '/zmk-config/config/totem.keymap'
+    elif 'forager' in artifact:
+        keymap = '/zmk-config/config/forager.keymap'
     else:
         keymap = '/zmk-config/config/default.keymap'
     
@@ -74,7 +76,7 @@ for target in config.get('include', []):
         import shlex
         for arg in shlex.split(cmake_args):
             if arg.startswith('-D'):
-                fixed_arg = arg.replace('../../zmk-config-totem/config', '/zmk-config/zmk-config-totem/config')
+                fixed_arg = arg.replace('../../', '/zmk-config/')
                 extra_args.append(fixed_arg)
     
     cmd.append('--')
