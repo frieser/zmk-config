@@ -1,0 +1,6 @@
+if SHIELD_TOTEM_DONGLE
+
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+
+endif

@@ -47,6 +47,8 @@ for target in config.get('include', []):
         keymap = '/zmk-config/config/totem.keymap'
     elif 'forager' in artifact:
         keymap = '/zmk-config/config/forager.keymap'
+    elif 'dongle_reset' in artifact:
+        keymap = '/zmk-config/config/default.keymap'
     else:
         keymap = '/zmk-config/config/default.keymap'
     
