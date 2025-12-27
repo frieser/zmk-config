@@ -37,11 +37,27 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 - Single board build: `west build -p -s zmk/app -b <board> -d builds/<name> -- -DSHIELD="<shields>" -DKEYMAP_FILE=config/<keymap>`
 
 ## Lint/Test Commands
-- No automated tests; manual testing required on hardware
-- Lint DTS: Use `dtc -I dts -O dtb <file>.dtsi` to check syntax
-- Run single "test": Flash firmware and verify keymap on keyboard
+  - No automated tests; manual testing required on hardware
+  - Lint DTS: Use `dtc -I dts -O dtb <file>.dtsi` to check syntax
+  - Run single "test": Flash firmware and verify keymap on keyboard
+
+## GitHub Actions Workflow
+- **Verificación Post-Push**:
+  - Cada vez que se haga un `git push` al repositorio, es OBLIGATORIO verificar el estado de las GitHub Actions.
+  - URL de Actions: https://github.com/frieser/zmk-config/actions
+  - **Procedimiento**:
+    1. Esperar un tiempo prudencial (1-2 minutos) después del push para que el workflow aparezca en la lista.
+    2. Monitorizar la ejecución hasta que se complete (puede tardar varios minutos).
+    3. Verificar que el resultado sea exitoso (check verde).
+    4. **En caso de error (cruz roja)**:
+       - Analizar los logs del fallo en GitHub Actions.
+       - Identificar la causa del error.
+       - Implementar la corrección necesaria en el código local.
+       - Hacer un nuevo commit y push.
+       - Repetir el proceso de verificación.
 
 ## Code Style Guidelines
+
 - **File Structure**: Use .dtsi includes for behaviors, layers, macros; .keymap for bindings
 - **Naming**: snake_case for behavior names, macros, layers; UPPER_CASE for defines
 - **Formatting**: 4-space indentation; align bindings in columns; use < > for key codes
