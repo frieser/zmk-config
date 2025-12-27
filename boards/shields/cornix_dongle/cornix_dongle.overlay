@@ -34,5 +34,6 @@
         zmk,kscan = &mock_kscan;
         zmk,matrix_transform = &default_transform;
         zmk,physical-layout = &physical_layout0;
+        zephyr,display = &ssd1306;
     };
 };
