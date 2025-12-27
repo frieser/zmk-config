@@ -46,12 +46,7 @@ if os.path.exists(BUILDS_DIR):
 
 subprocess.run(['west', 'zephyr-export'], cwd='/zmk-config', check=True)
 
-
-
 for target in config.get('include', []):
-
-
-
     board = target['board']
     artifact = target['artifact-name']
     
@@ -72,7 +67,6 @@ for target in config.get('include', []):
         '-b', board,
         '-d', f'builds/{artifact}'
     ]
-    
     shield = target.get('shield', '')
     snippet = target.get('snippet', '')
     
@@ -81,7 +75,6 @@ for target in config.get('include', []):
         extra_args.append(f'-DSHIELD={shield}')
         
     if snippet:
-
         snippet_parts = snippet.split()
         for part in snippet_parts:
             extra_args.append(f'-DSNIPPET={part}')
@@ -89,12 +82,6 @@ for target in config.get('include', []):
         extra_args.append(f'-DKEYMAP_FILE={keymap}')
     
     cmake_args = target.get('cmake-args', '')
-    if cmake_args:
-        import shlex
-        for arg in shlex.split(cmake_args):
-            if arg.startswith('-D'):
-                fixed_arg = arg.replace('../../', '/zmk-config/')
-                extra_args.append(fixed_arg)
     
     cmd.append('--')
     cmd.extend(extra_args)
