@@ -31,6 +31,5 @@ xiao_i2c: &i2c0 {};
     chosen {
         zmk,kscan = &mock_kscan;
         zmk,physical-layout = &physical_layout0;
-        zephyr,display = &ssd1306;
     };
 };
