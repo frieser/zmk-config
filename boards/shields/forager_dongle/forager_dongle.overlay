@@ -1,6 +1,8 @@
 #include <dt-bindings/zmk/matrix_transform.h>
 
-xiao_i2c: &i2c0 {};
+xiao_i2c: &i2c0 {
+    status = "okay";
+};
 
 / {
     mock_kscan: mock_kscan_0 {
