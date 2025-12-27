@@ -64,10 +64,10 @@ for target in config.get('include', []):
     
     extra_args = []
     if shield:
-        shield_parts = shield.split()
-        for part in shield_parts:
-            extra_args.append(f'-DSHIELD={part}')
+        extra_args.append(f'-DSHIELD={shield}')
+        
     if snippet:
+
         snippet_parts = snippet.split()
         for part in snippet_parts:
             extra_args.append(f'-DSNIPPET={part}')
