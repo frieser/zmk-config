@@ -40,7 +40,13 @@ if os.path.exists(FIRMWARE_OUT):
     shutil.rmtree(FIRMWARE_OUT)
 os.makedirs(FIRMWARE_OUT, exist_ok=True)
 
+BUILDS_DIR = '/zmk-config/builds'
+if os.path.exists(BUILDS_DIR):
+    shutil.rmtree(BUILDS_DIR)
+
 subprocess.run(['west', 'zephyr-export'], cwd='/zmk-config', check=True)
+
+
 
 for target in config.get('include', []):
 
