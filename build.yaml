@@ -21,7 +21,16 @@ include:
     artifact-name: totem_right
     cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DBOARD_ROOT="/zmk-config/zmk-config-totem/config"
 
+  - board: seeeduino_xiao
+    shield: totem_left
+    artifact-name: totem_left_for_dongle
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n -DBOARD_ROOT="/zmk-config/zmk-config-totem/config"
+
   # Reset shields
   - board: cornix_right
     shield: settings_reset
     artifact-name: cornix_reset
+
+  - board: seeeduino_xiao
+    shield: settings_reset
+    artifact-name: totem_reset
