@@ -1,6 +1,10 @@
 #include <dt-bindings/zmk/matrix_transform.h>
 
 / {
+    aliases {
+        xiao_i2c = &pro_micro_i2c;
+    };
+
     mock_kscan: mock_kscan_0 {
         compatible = "zmk,kscan-mock";
         columns = <0>;
