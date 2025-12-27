@@ -30,6 +30,10 @@ Keep this managed block so 'openspec update' can refresh the instructions.
     - `build.yaml` se usa en GitHub Actions
     - `build-all.sh` lee el `build.yaml` y replica las mismas compilaciones localmente
     - Cualquier cambio en las configuraciones debe reflejarse en ambos archivos
+  - **ESPERA OBLIGATORIA**: Al ejecutar `build-all.sh` o cualquier comando de compilación, DEBES esperar a que termine completamente y devuelva el control (prompt) antes de considerar la tarea como válida o terminada.
+    - El proceso puede tardar varios minutos (10-15+ minutos).
+    - No asumas que ha funcionado hasta ver el mensaje de éxito final o el código de salida 0.
+    - Si se ejecuta en background, usa `wait` o monitorea activamente hasta la finalización.
 - Single board build: `west build -p -s zmk/app -b <board> -d builds/<name> -- -DSHIELD="<shields>" -DKEYMAP_FILE=config/<keymap>`
 
 ## Lint/Test Commands

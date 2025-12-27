@@ -62,9 +62,9 @@ for target in config.get('include', []):
     elif 'forager' in artifact:
         keymap = '/zmk-config/config/forager.keymap'
     elif 'dongle_reset' in artifact:
-        keymap = '/zmk-config/config/default.keymap'
+        keymap = '/zmk-config/config/cornix.keymap'
     else:
-        keymap = '/zmk-config/config/default.keymap'
+        keymap = '/zmk-config/config/cornix.keymap'
     
     cmd = [
         'west', 'build', '-s', 'zmk/app',
