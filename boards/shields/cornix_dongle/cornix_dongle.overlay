@@ -27,8 +27,6 @@ xiao_i2c: &i2c0 {
         zmk,physical-layout = &physical_layout0;
     };
 
-
-/ {
     mock_kscan: mock_kscan_0 {
         compatible = "zmk,kscan-mock";
         columns = <0>;
@@ -52,11 +50,5 @@ xiao_i2c: &i2c0 {
         compatible = "zmk,physical-layout";
         display-name = "Cornix Dongle Layout";
         transform = <&default_transform>;
-    };
-
-    chosen {
-        zmk,kscan = &mock_kscan;
-        zmk,matrix_transform = &default_transform;
-        zmk,physical-layout = &physical_layout0;
     };
 };
