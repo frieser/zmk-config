@@ -54,6 +54,7 @@ for target in config.get('include', []):
     
     cmd = [
         'west', 'build', '-s', 'zmk/app',
+        '-p',
         '-b', board,
         '-d', f'builds/{artifact}'
     ]
