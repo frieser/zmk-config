@@ -35,9 +35,17 @@ import os
 with open('/zmk-config/build.yaml', 'r') as f:
     config = yaml.safe_load(f)
 
+FIRMWARE_OUT = '/zmk-config/firmwares'
+if os.path.exists(FIRMWARE_OUT):
+    shutil.rmtree(FIRMWARE_OUT)
+os.makedirs(FIRMWARE_OUT, exist_ok=True)
+
 subprocess.run(['west', 'zephyr-export'], cwd='/zmk-config', check=True)
 
 for target in config.get('include', []):
+
+
+
     board = target['board']
     artifact = target['artifact-name']
     
@@ -99,10 +107,11 @@ for target in config.get('include', []):
 
 # Collect firmware files
 print('📦 Collecting firmware files...')
-FIRMWARE_OUT = '/zmk-config/firmwares'
-os.makedirs(FIRMWARE_OUT, exist_ok=True)
 
 for root, dirs, files in os.walk('/zmk-config/builds'):
+
+
+
     for f in files:
         if f == 'zmk.uf2':
             dir_path = os.path.dirname(root)
