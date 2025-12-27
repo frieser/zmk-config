@@ -56,6 +56,11 @@ Keep this managed block so 'openspec update' can refresh the instructions.
        - Hacer un nuevo commit y push.
        - Repetir el proceso de verificación.
 
+## Git Operations
+- **Restricción de Comandos**:
+  - NO ejecutar comandos de git (commit, push, checkout, etc.) a menos que el usuario lo solicite EXPLÍCITAMENTE.
+  - Si se han realizado cambios y se considera necesario guardarlos, PREGUNTAR al usuario antes de hacer commit.
+
 ## Code Style Guidelines
 
 - **File Structure**: Use .dtsi includes for behaviors, layers, macros; .keymap for bindings
