@@ -14,3 +14,20 @@ include:
     shield: cornix_dongle_eyelash dongle_display
     snippet: studio-rpc-usb-uart
     artifact-name: cornix_dongle
+
+  # Reset shields
+  - board: cornix_right
+    shield: settings_reset
+    artifact-name: cornix_reset
+
+  - board: seeeduino_xiao
+    shield: settings_reset
+    artifact-name: totem_reset
+
+  - board: seeeduino_xiao_ble
+    shield: settings_reset
+    artifact-name: forager_reset
+
+  - board: nice_nano_v2
+    shield: settings_reset
+    artifact-name: dongle_reset
