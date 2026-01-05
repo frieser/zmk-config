@@ -49,22 +49,10 @@ subprocess.run(['west', 'zephyr-export'], cwd='/zmk-config', check=True)
 
 
 for target in config.get('include', []):
-
-
-
     board = target['board']
     artifact = target['artifact-name']
-    
-    if 'cornix' in artifact:
-        keymap = '/zmk-config/config/cornix.keymap'
-    elif 'totem' in artifact:
-        keymap = '/zmk-config/config/totem.keymap'
-    elif 'forager' in artifact:
-        keymap = '/zmk-config/config/forager.keymap'
-    elif 'dongle_reset' in artifact:
-        keymap = '/zmk-config/config/cornix.keymap'
-    else:
-        keymap = '/zmk-config/config/cornix.keymap'
+    shield = target.get('shield', '')
+    snippet = target.get('snippet', '')
     
     cmd = [
         'west', 'build', '-s', 'zmk/app',
@@ -73,20 +61,18 @@ for target in config.get('include', []):
         '-d', f'builds/{artifact}'
     ]
     
-    shield = target.get('shield', '')
-    snippet = target.get('snippet', '')
+    # Snippets are west flags (before --), not cmake flags
+    if snippet:
+        for s in snippet.split():
+            cmd.extend(['-S', s])
     
     extra_args = []
     if shield:
         extra_args.append(f'-DSHIELD={shield}')
-        
-    if snippet:
-
-        snippet_parts = snippet.split()
-        for part in snippet_parts:
-            extra_args.append(f'-DSNIPPET={part}')
-    if keymap:
-        extra_args.append(f'-DKEYMAP_FILE={keymap}')
+    
+    # Add ZMK_CONFIG for non-settings_reset builds
+    if 'settings_reset' not in shield:
+        extra_args.append('-DZMK_CONFIG=/zmk-config/config')
     
     cmake_args = target.get('cmake-args', '')
     if cmake_args:
@@ -96,13 +82,13 @@ for target in config.get('include', []):
                 fixed_arg = arg.replace('../../', '/zmk-config/')
                 extra_args.append(fixed_arg)
     
-    cmd.append('--')
-    cmd.extend(extra_args)
+    if extra_args:
+        cmd.append('--')
+        cmd.extend(extra_args)
     
     print(f'Building: {artifact}')
     print(f'  Board: {board}')
     print(f'  Shield: {shield}')
-    print(f'  Keymap: {keymap}')
     
     result = subprocess.run(cmd, cwd='/zmk-config')
     if result.returncode != 0:

@@ -15,6 +15,19 @@ include:
     snippet: studio-rpc-usb-uart
     artifact-name: cornix_dongle
 
+  # Forager
+  - board: seeeduino_xiao_ble
+    shield: forager_left
+    artifact-name: forager_left
+
+  - board: seeeduino_xiao_ble
+    shield: forager_right
+    artifact-name: forager_right
+
+  - board: seeeduino_xiao_ble
+    shield: forager_left
+    artifact-name: forager_left_for_dongle
+
   # Reset shields
   - board: cornix_right
     shield: settings_reset
