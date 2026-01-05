@@ -17,58 +17,103 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 
 <!-- OPENSPEC:END -->
 
-# AGENTS.md for ZMK Config Repository
+# ZMK Multi-Keyboard Config
 
-## Build Commands
-- **Para probar todas las funcionalidades y compilar todos los firmwares de los teclados ZMK**: `bash build-all.sh`
-  - Este es el comando principal que compila todas las variantes de teclado usando podman y west
-  - **IMPORTANTE**: Este script tarda varios minutos en completarse
-  - Debe ejecutarse en background de forma asincrónica (usando tmux/interactive_bash o herramientas de background)
-  - Comprobar el estado de forma asincrónica durante la ejecución
-  - **SINCRONIZACIÓN CRÍTICA**: El script `build-all.sh` y el archivo `build.yaml` deben estar sincronizados
-    - Ambos deben compilar exactamente las mismas configuraciones de teclados
-    - `build.yaml` se usa en GitHub Actions
-    - `build-all.sh` lee el `build.yaml` y replica las mismas compilaciones localmente
-    - Cualquier cambio en las configuraciones debe reflejarse en ambos archivos
-  - **ESPERA OBLIGATORIA**: Al ejecutar `build-all.sh` o cualquier comando de compilación, DEBES esperar a que termine completamente y devuelva el control (prompt) antes de considerar la tarea como válida o terminada.
-    - El proceso puede tardar varios minutos (10-15+ minutos).
-    - No asumas que ha funcionado hasta ver el mensaje de éxito final o el código de salida 0.
-    - Si se ejecuta en background, usa `wait` o monitorea activamente hasta la finalización.
-- Single board build: `west build -p -s zmk/app -b <board> -d builds/<name> -- -DSHIELD="<shields>" -DKEYMAP_FILE=config/<keymap>`
+**Generated:** 2026-01-05 | **Commit:** 8cc58e5 | **Branch:** totem_dongle
 
-## Lint/Test Commands
-  - No automated tests; manual testing required on hardware
-  - Lint DTS: Use `dtc -I dts -O dtb <file>.dtsi` to check syntax
-  - Run single "test": Flash firmware and verify keymap on keyboard
+## OVERVIEW
+Multi-keyboard ZMK firmware config using **Key-Count-Based Architecture**. Supports Totem (38-keys), Cornix (50-keys), Forager (34-keys), Urchin (34-keys). Dongle-centric design with shared logical layers.
 
-## GitHub Actions Workflow
-- **Verificación Post-Push**:
-  - Cada vez que se haga un `git push` al repositorio, es OBLIGATORIO verificar el estado de las GitHub Actions.
-  - URL de Actions: https://github.com/frieser/zmk-config/actions
-  - **Procedimiento**:
-    1. Esperar un tiempo prudencial (1-2 minutos) después del push para que el workflow aparezca en la lista.
-    2. Monitorizar la ejecución hasta que se complete (puede tardar varios minutos).
-    3. Verificar que el resultado sea exitoso (check verde).
-    4. **En caso de error (cruz roja)**:
-       - Analizar los logs del fallo en GitHub Actions.
-       - Identificar la causa del error.
-       - Implementar la corrección necesaria en el código local.
-       - Hacer un nuevo commit y push.
-       - Repetir el proceso de verificación.
+## STRUCTURE
+```
+./
+├── config/                    # YOUR CODE LIVES HERE
+│   ├── *.keymap               # Entry points (stub files, include base.dtsi)
+│   ├── *.conf                 # Kconfig per keyboard
+│   ├── includes/
+│   │   ├── 34-keys/base.dtsi  # Forager/Urchin layout adapter
+│   │   ├── 38-keys/base.dtsi  # Totem layout adapter
+│   │   ├── 50-keys/base.dtsi  # Cornix layout adapter
+│   │   ├── layers.dtsi        # SHARED layer definitions (edit this!)
+│   │   ├── behaviours.dtsi    # Custom hold-taps, tap-dances
+│   │   ├── combos.dtsi        # Chord combos
+│   │   ├── macros.dtsi        # Macros
+│   │   └── mouse.dtsi         # Pointing/mouse config
+│   └── layouts/
+│       └── XX-keys.h          # Physical→logical key mapping macros
+├── build.yaml                 # Build matrix (CI + local)
+├── build-all.sh               # Local build via Podman
+└── zmk/, zephyr/, modules/    # Dependencies (DON'T EDIT)
+```
 
-## Git Operations
-- **Restricción de Comandos**:
-  - NO ejecutar comandos de git (commit, push, checkout, etc.) a menos que el usuario lo solicite EXPLÍCITAMENTE.
-  - Si se han realizado cambios y se considera necesario guardarlos, PREGUNTAR al usuario antes de hacer commit.
+## WHERE TO LOOK
 
-## Code Style Guidelines
+| Task | Location | Notes |
+|------|----------|-------|
+| Modify keybindings | `config/includes/layers.dtsi` | Shared across all keyboards |
+| Add behavior | `config/includes/behaviours.dtsi` | Home-row mods defined here |
+| Add combo | `config/includes/combos.dtsi` | |
+| Add macro | `config/includes/macros.dtsi` | |
+| Keyboard-specific tweaks | `config/includes/XX-keys/base.dtsi` | Layout adapter per key count |
+| Enable feature | `config/default.conf` or `config/<keyboard>.conf` | |
+| Add build target | `build.yaml` AND `build-all.sh` | MUST sync both |
 
-- **File Structure**: Use .dtsi includes for behaviors, layers, macros; .keymap for bindings
-- **Naming**: snake_case for behavior names, macros, layers; UPPER_CASE for defines
-- **Formatting**: 4-space indentation; align bindings in columns; use < > for key codes
-- **Imports**: #include relative paths; order: behaviors.dtsi, layers.dtsi, etc.
-- **Types**: Use compatible strings like "zmk,behavior-hold-tap"; #binding-cells as needed
-- **Error Handling**: Validate DTS with dtc; test behaviors on actual hardware
-- **Comments**: Use // for single-line; document complex behaviors/macros
-- **Keymaps**: Group by layers; use LAYER_FROMXX macros for readability
-- **Conventions**: Follow ZMK docs; use positional hold-taps for home rows; avoid magic numbers
+## BUILD COMMANDS
+```bash
+# Full build (all keyboards) - TAKES 10-15 MINUTES
+bash build-all.sh
+
+# Single target
+west build -p -s zmk/app -b <board> -d builds/<name> -- \
+  -DSHIELD="<shields>" -DKEYMAP_FILE=config/<keymap>
+
+# Lint DTS syntax
+dtc -I dts -O dtb <file>.dtsi
+```
+
+## LOCAL TESTING WORKFLOW
+To test firmwares locally without waiting for the full build:
+1.  Edit `build.yaml` to comment out all keyboards except the one you want to test.
+2.  Run `bash build-all.sh`.
+3.  Once verified, comment out that keyboard, uncomment the next one, and run `bash build-all.sh` again.
+4.  Repeat until all necessary keyboards have been tested.
+
+## CONVENTIONS
+
+### Architecture Pattern
+- **Stub Keymaps**: `*.keymap` files are 3-line includes, NOT full keymaps
+- **Base Logic**: All layers in `includes/layers.dtsi`, shared by all keyboards
+- **Layout Macros**: `LAYER_FROMXX()` maps logical keys to physical matrix
+
+### Code Style
+- **Naming**: snake_case for behaviors/macros/layers; UPPER_CASE for defines
+- **Indentation**: 4 spaces; align bindings in columns
+- **Key Codes**: Use `< >` angle brackets for key codes
+- **Includes**: Relative paths; order: behaviors → layers → combos → macros
+
+### Behaviors
+- **Home-row mods**: Use positional hold-taps (`hm_l`, `hm_r`, `hm_shift_l`, `hm_shift_r`)
+- **Tap-dance**: `td1`-`td0` = numbers on tap, F-keys on double-tap
+
+## ANTI-PATTERNS
+
+| Forbidden | Reason |
+|-----------|--------|
+| Edit `*.keymap` directly | They're stubs; edit `includes/layers.dtsi` |
+| Edit zmk/, zephyr/, modules/ | Dependencies; changes will be lost |
+| Edit external modules from `config/west.yml` | External dependencies: `zmk`, `zmk-keyboard-cornix`, `zmk-helpers`, `zmk-dongle-display`, `forager-zmk-module`, `zmk-rgbled-widget`, `zmk-config-totem`. These are cloned by `west update` and MUST NOT be modified |
+| Change `build.yaml` without `build-all.sh` | MUST stay in sync |
+| Git operations without asking | NO commit/push unless user requests |
+| Assume build succeeded | WAIT for exit code 0 |
+
+## GITHUB ACTIONS
+- **URL**: https://github.com/frieser/zmk-config/actions
+- **Post-push**: MUST verify workflow succeeds (green check)
+- **On failure**: Analyze logs → fix → commit → push → re-verify
+
+## NOTES
+- **Build time**: `build-all.sh` takes 10-15+ minutes
+- **Dongle builds**: `*_for_dongle` artifacts pair with `*_dongle` receiver
+- **Mouse support**: Enabled via `CONFIG_ZMK_POINTING=y` in `default.conf`
+- **ZMK Studio**: Cornix dongle supports live configuration
+- **External modules**: `zmk-helpers`, `zmk-dongle-display` via `config/west.yml`
