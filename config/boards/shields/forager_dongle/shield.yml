@@ -1,0 +1,12 @@
+file_format: "1"
+id: forager_dongle
+name: FORAGER_DONGLE
+type: shield
+url: https://github.com/carrefinho/forager-zmk-module
+requires: [forager]
+exposes: [i2c_oled]
+features:
+  - keys
+  - display
+siblings:
+  - forager_dongle

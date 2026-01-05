@@ -43,6 +43,7 @@
 # Default: Two-pane layout with shell and clear command.
 panes:
   - command: vim
+    size: 40
   - split: horizontal
     focus: true
     command: <agent>
