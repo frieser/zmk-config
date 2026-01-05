@@ -15,7 +15,7 @@ include:
     snippet: studio-rpc-usb-uart
     artifact-name: cornix_dongle
 
-  # Totem 
+  # Totem
   - board: seeeduino_xiao_ble
     shield: totem_left
     artifact-name: totem_left
@@ -26,6 +26,7 @@ include:
 
   - board: seeeduino_xiao_ble
     shield: totem_left
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
     artifact-name: totem_left_for_dongle
 
   # Forager
@@ -39,6 +40,7 @@ include:
 
   - board: seeeduino_xiao_ble
     shield: forager_left
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
     artifact-name: forager_left_for_dongle
 
   # Reset shields
@@ -46,7 +48,7 @@ include:
     shield: settings_reset
     artifact-name: cornix_reset
 
-  - board: seeeduino_xiao
+  - board: seeeduino_xiao_ble
     shield: settings_reset
     artifact-name: totem_reset
 
