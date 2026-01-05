@@ -1,0 +1,12 @@
+file_format: "1"
+id: totem_dongle
+name: TOTEM_DONGLE
+type: shield
+url: https://github.com/GEIGEIGEIST/TOTEM
+requires: [totem]
+exposes: [i2c_oled]
+features:
+  - keys
+  - display
+siblings:
+  - totem_dongle
