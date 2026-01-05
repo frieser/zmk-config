@@ -11,7 +11,7 @@ include:
     artifact-name: cornix_right
 
   - board: nice_nano
-    shield: cornix_dongle_adaptor cornix_dongle_eyelash dongle_display
+    shield: cornix_dongle_adapter cornix_dongle_eyelash dongle_display
     snippet: studio-rpc-usb-uart
     artifact-name: cornix_dongle
 

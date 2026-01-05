@@ -21,7 +21,7 @@ manifest:
       remote: zmkfirmware
     - name: zmk-keyboard-cornix
       remote: hitsmaxft
-      revision: v2.6.8
+      revision: v2.7.1
     - name: zmk-helpers
       remote: urob
       revision: main
