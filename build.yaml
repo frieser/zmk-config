@@ -15,23 +15,18 @@ include:
     snippet: studio-rpc-usb-uart
     artifact-name: cornix_dongle
 
-  # - board: cornix_dongle
-  #   shield: cornix_dongle_eyelash dongle_display
-  #   snippet: studio-rpc-usb-uart
-  #   artifact-name: cornix_dongle
+  # Totem 
+  - board: seeeduino_xiao_ble
+    shield: totem_left
+    artifact-name: totem_left
 
-  # Totem - DISABLED: zmk-config-totem lacks proper ZMK module structure
-  # - board: seeeduino_xiao
-  #   shield: totem_left
-  #   artifact-name: totem_left
+  - board: seeeduino_xiao_ble
+    shield: totem_right
+    artifact-name: totem_right
 
-  # - board: seeeduino_xiao
-  #   shield: totem_right
-  #   artifact-name: totem_right
-
-  # - board: seeeduino_xiao
-  #   shield: totem_left
-  #   artifact-name: totem_left_for_dongle
+  - board: seeeduino_xiao_ble
+    shield: totem_left
+    artifact-name: totem_left_for_dongle
 
   # Forager
   - board: seeeduino_xiao_ble
