@@ -1,0 +1,24 @@
+name: Build ZMK firmware
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  cornix:
+    uses: ./.github/workflows/zmk-build.yml
+    with:
+      build_matrix_path: cornix.yaml
+      archive_name: cornix
+      artifact_prefix: cornix
+
+  totem:
+    uses: ./.github/workflows/zmk-build.yml
+    with:
+      build_matrix_path: totem.yaml
+      archive_name: totem
+      artifact_prefix: totem
+
+  forager:
+    uses: ./.github/workflows/zmk-build.yml
+    with:
+      build_matrix_path: forager.yaml
+      archive_name: forager
+      artifact_prefix: forager
