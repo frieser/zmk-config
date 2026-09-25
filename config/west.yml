@@ -24,17 +24,16 @@ manifest:
       revision: v2.6.8
     - name: zmk-helpers
       remote: urob
-      revision: main
+      revision: v0.3
     - name: zmk-dongle-display
       remote: hitsmaxft
-      revision: main
-      clone-depth: 1
+      revision: 6682adc40247dd743f33d57959630fb5249f3ae7
     - name: forager-zmk-module
       remote: carrefinho
       revision: main
     - name: zmk-rgbled-widget
       remote: caksoylar
-      revision: main
+      revision: v0.3
     - name: zmk-config-totem
       remote: GEIGEIGEIST
       revision: master
