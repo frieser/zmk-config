@@ -124,7 +124,7 @@ To test firmwares locally without waiting for the full build:
 - **Releases**: tag `firmware-<shortsha>` (or the pushed `v*` tag) with the `.uf2` files attached.
 - **Pipeline**: `.tekton/*.yaml` → `ci/tekton/pipeline.yaml` (one Task, three steps: clone → build → publish).
 - **Workspaces**: `source` = emptyDir (clone, pristine build trees, `.uf2`); `cache` = PVC `zmk-west-cache` (20Gi, `ci-build`) holding only the west workspace (`zephyr/`, `zmk/`, modules).
-- **Cache**: `CACHE_DIR` in `ci/build-firmware.sh`. `config/` is recopied from the clone every run; build trees stay out of the PVC. A failed `west update` wipes and retries once. Cold build ≈22 min, warm ≈15 min.
+- **Cache**: `CACHE_DIR` in `ci/build-firmware.sh`. `config/` is recopied from the clone every run; build trees stay out of the PVC. A failed `west update` wipes and retries once. Measured: cold PipelineRun 15m52s (build step 15m08s), warm 11m30s (11m22s); the cached workspace is ~3.7 GiB.
 - **RWO**: the cache PVC admits one build at a time. A push build and a PR build that overlap queue (second pod Pending) instead of corrupting the workspace. Do not create a second PVC-less pipeline expecting parallelism.
 - **Actions are disabled on the Forgejo repo** (`has_actions: false`): the old `.github/workflows/*` fail in 0s there (no runner) and paint the commit red. They stay for the GitHub mirror only.
 - **Post-push**: MUST verify the PipelineRun succeeds.
