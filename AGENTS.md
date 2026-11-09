@@ -122,10 +122,13 @@ To test firmwares locally without waiting for the full build:
 - **Runs**: https://forge.homelab.frieserlabs.dev/frieser/zmk-config/actions (or `kubectl -n ci-build get pipelinerun`)
 - **Trigger**: push to `main` or a `v*` tag builds every matrix and publishes a release; a PR builds only.
 - **Releases**: tag `firmware-<shortsha>` (or the pushed `v*` tag) with the `.uf2` files attached.
-- **Pipeline**: `.tekton/*.yaml` → `ci/tekton/pipeline.yaml` (one Task, three steps: clone → build → publish, sharing an emptyDir).
+- **Pipeline**: `.tekton/*.yaml` → `ci/tekton/pipeline.yaml` (one Task, three steps: clone → build → publish).
+- **Workspaces**: `source` = emptyDir (clone, pristine build trees, `.uf2`); `cache` = PVC `zmk-west-cache` (20Gi, `ci-build`) holding only the west workspace (`zephyr/`, `zmk/`, modules).
+- **Cache**: `CACHE_DIR` in `ci/build-firmware.sh`. `config/` is recopied from the clone every run; build trees stay out of the PVC. A failed `west update` wipes and retries once. Cold build ≈22 min, warm ≈15 min.
+- **RWO**: the cache PVC admits one build at a time. A push build and a PR build that overlap queue (second pod Pending) instead of corrupting the workspace. Do not create a second PVC-less pipeline expecting parallelism.
+- **Actions are disabled on the Forgejo repo** (`has_actions: false`): the old `.github/workflows/*` fail in 0s there (no runner) and paint the commit red. They stay for the GitHub mirror only.
 - **Post-push**: MUST verify the PipelineRun succeeds.
 - **On failure**: `kubectl -n ci-build logs pipelinerun/<name> --all-containers` → fix → push → re-verify.
-- The old `.github/workflows/*` stay for the GitHub mirror; Forgejo does NOT run them.
 
 ## NOTES
 - **Build time**: `build-all.sh` takes 10-15+ minutes

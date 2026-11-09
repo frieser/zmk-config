@@ -8,7 +8,15 @@
 # Why one Task with three steps instead of three Tasks: the `source` workspace
 # is an emptyDir, i.e. a directory of a single Tekton pod. Splitting the build
 # from the release into separate TaskRuns would create a second pod and lose the
-# .uf2 files in between; a PVC for it would serialise builds for no gain.
+# .uf2 files in between.
+#
+# Workspaces:
+#   source  emptyDir: clone + pristine build trees + collected .uf2. Thrown away.
+#   cache   PVC zmk-west-cache: only the west workspace (zephyr + zmk + modules,
+#           ~3 GiB). `west update` is ~5 min of every build, and the upstream
+#           refs barely move, so keeping them pays off from the second run on.
+#           RWO, so two builds (e.g. a push and a PR) cannot overlap: the second
+#           pod waits for the volume. Acceptable for a firmware repo.
 #
 # Image: zmkfirmware/zmk-build-arm:3.5-branch — same one build-all.sh uses with
 # podman locally, so the toolchain (west, arm-zephyr-eabi, PyYAML) is identical
@@ -38,7 +46,9 @@ spec:
       default: "false"
   workspaces:
     - name: source
-      description: Clone + west workspace + collected firmware.
+      description: Clone + pristine build trees + collected firmware (emptyDir).
+    - name: cache
+      description: Persistent west workspace, mountable by one build at a time.
   tasks:
     - name: firmware
       params:
@@ -53,6 +63,8 @@ spec:
       workspaces:
         - name: source
           workspace: source
+        - name: cache
+          workspace: cache
       timeout: 60m0s
       taskSpec:
         params:
@@ -62,6 +74,7 @@ spec:
           - name: publish
         workspaces:
           - name: source
+          - name: cache
         steps:
           - name: clone
             image: alpine/git:v2.54.0
@@ -95,6 +108,11 @@ spec:
                 value: /root
               - name: ZMK_BUILD_JOBS
                 value: "4"
+              - name: CACHE_DIR
+                value: $(workspaces.cache.path)
+            volumeMounts:
+              - name: cache
+                mountPath: $(workspaces.cache.path)
             computeResources:
               requests:
                 cpu: 500m

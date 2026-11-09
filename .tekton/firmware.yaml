@@ -49,5 +49,10 @@ spec:
   workspaces:
     - name: source
       emptyDir: {}
+    # Shared west workspace cache. ReadWriteOnce: if a push build and a PR build
+    # overlap, the second pod waits for the volume instead of corrupting it.
+    - name: cache
+      persistentVolumeClaim:
+        claimName: zmk-west-cache
   timeouts:
     pipeline: 75m0s
