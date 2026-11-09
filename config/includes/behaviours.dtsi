@@ -11,66 +11,72 @@
 #define HM_TAPPING_TERM_FAST          200
 #define HM_PRIOR_IDLE                 70
 
+/* Tap-dance window for td0..td9 (digit on tap, F-key on double tap).
+ * ZMK measures the window from the press. It decides how fast a repeat of
+ * the SAME key turns into the F-key. Below ~100 ms a deliberate double tap
+ * becomes hard to hit. */
+#define TD_TAPPING_TERM               130
+
 / {
     behaviors {
         td0: tap_dance_0 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N0>, <&kp F10>;
         };
         td1: tap_dance_1 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N1>, <&kp F1>;
         };
         td2: tap_dance_2 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N2>, <&kp F2>;
         };
         td3: tap_dance_3 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N3>, <&kp F3>;
         };
         td4: tap_dance_4 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N4>, <&kp F4>;
         };
         td5: tap_dance_5 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N5>, <&kp F5>;
         };
         td6: tap_dance_6 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N6>, <&kp F6>;
         };
         td7: tap_dance_7 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N7>, <&kp F7>;
         };
         td8: tap_dance_8 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N8>, <&kp F8>;
         };
         td9: tap_dance_9 {
             compatible = "zmk,behavior-tap-dance";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <TD_TAPPING_TERM>;
             bindings = <&kp N9>, <&kp F9>;
         };
 
