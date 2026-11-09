@@ -1,0 +1,151 @@
+# Firmware build for the ZMK config, as a Tekton Pipeline (Pipelines-as-Code).
+#
+# It is read by PaC straight from this repo, referenced by the
+# `pipelinesascode.tekton.dev/pipeline` annotation of .tekton/firmware*.yaml.
+# Keeping it here (instead of the GitOps repo) means the CI of the keyboard
+# config evolves in the same commit as the keymaps it builds.
+#
+# Why one Task with three steps instead of three Tasks: the `source` workspace
+# is an emptyDir, i.e. a directory of a single Tekton pod. Splitting the build
+# from the release into separate TaskRuns would create a second pod and lose the
+# .uf2 files in between; a PVC for it would serialise builds for no gain.
+#
+# Image: zmkfirmware/zmk-build-arm:3.5-branch — same one build-all.sh uses with
+# podman locally, so the toolchain (west, arm-zephyr-eabi, PyYAML) is identical
+# on the laptop and in the cluster.
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: zmk-firmware
+  labels:
+    app.kubernetes.io/part-of: zmk-config
+    app.kubernetes.io/component: firmware-build
+spec:
+  params:
+    - name: repo-url
+      description: Clone URL injected by PaC ({{ repo_url }}).
+      type: string
+    - name: revision
+      description: Commit or tag SHA to build ({{ revision }}).
+      type: string
+    - name: target-branch
+      description: Ref that triggered the run ({{ target_branch }}), used to name the release.
+      type: string
+      default: refs/heads/main
+    - name: publish
+      description: Create/update a Forgejo release with the .uf2 files.
+      type: string
+      default: "false"
+  workspaces:
+    - name: source
+      description: Clone + west workspace + collected firmware.
+  tasks:
+    - name: firmware
+      params:
+        - name: repo-url
+          value: $(params.repo-url)
+        - name: revision
+          value: $(params.revision)
+        - name: target-branch
+          value: $(params.target-branch)
+        - name: publish
+          value: $(params.publish)
+      workspaces:
+        - name: source
+          workspace: source
+      timeout: 60m0s
+      taskSpec:
+        params:
+          - name: repo-url
+          - name: revision
+          - name: target-branch
+          - name: publish
+        workspaces:
+          - name: source
+        steps:
+          - name: clone
+            image: alpine/git:v2.54.0
+            workingDir: $(workspaces.source.path)
+            env:
+              - name: REPO_URL
+                value: $(params.repo-url)
+              - name: REVISION
+                value: $(params.revision)
+              - name: GIT_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: ci-build-secrets
+                    key: forgejo-token
+            script: |
+              #!/usr/bin/env sh
+              set -eu
+              # The repo is private: always clone with the token, otherwise git
+              # fails with "could not read Username" and no hint about why.
+              auth_url=$(printf '%s' "$REPO_URL" | sed -E "s#^https://#https://oauth2:${GIT_TOKEN}@#")
+              git clone --quiet "$auth_url" .
+              git remote set-url origin "$REPO_URL"
+              git -c advice.detachedHead=false checkout --quiet "$REVISION"
+              echo "checked out $(git rev-parse --short HEAD) ($(git log -1 --pretty=%s))"
+
+          - name: build
+            image: zmkfirmware/zmk-build-arm:3.5-branch
+            workingDir: $(workspaces.source.path)
+            env:
+              - name: HOME
+                value: /root
+              - name: ZMK_BUILD_JOBS
+                value: "4"
+            computeResources:
+              requests:
+                cpu: 500m
+                memory: 2Gi
+              limits:
+                cpu: "4"
+                memory: 8Gi
+            script: |
+              #!/bin/bash
+              set -euo pipefail
+              export PATH="/root/.local/bin:${PATH}"
+              echo "west: $(west --version 2>/dev/null || echo missing)"
+              bash ci/build-firmware.sh "$(workspaces.source.path)" "$(workspaces.source.path)/out"
+
+          - name: publish
+            image: alpine:3.20
+            workingDir: $(workspaces.source.path)
+            env:
+              - name: PUBLISH
+                value: $(params.publish)
+              - name: TARGET_BRANCH
+                value: $(params.target-branch)
+              - name: REVISION
+                value: $(params.revision)
+              - name: FORGEJO_URL
+                value: https://forge.homelab.frieserlabs.dev
+              - name: FORGEJO_REPO
+                value: frieser/zmk-config
+              - name: FORGEJO_TOKEN
+                valueFrom:
+                  secretKeyRef:
+                    name: ci-build-secrets
+                    key: forgejo-token
+            script: |
+              #!/bin/sh
+              set -eu
+              if [ "$PUBLISH" != "true" ]; then
+                echo "publish=false (validation run): firmware kept in the workspace only"
+                ls -R out | head -40
+                exit 0
+              fi
+              apk add --no-cache curl jq >/dev/null
+              short=$(echo "$REVISION" | cut -c1-8)
+              case "$TARGET_BRANCH" in
+                refs/tags/v*)
+                  tag=${TARGET_BRANCH#refs/tags/}
+                  name="$tag"
+                  ;;
+                *)
+                  tag="firmware-$short"
+                  name="Firmware $(date -u +%Y-%m-%d) ($short)"
+                  ;;
+              esac
+              sh ci/publish-release.sh out "$FORGEJO_REPO" "$tag" "$name" "$REVISION"

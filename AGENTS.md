@@ -41,8 +41,17 @@ Multi-keyboard ZMK firmware config using **Key-Count-Based Architecture**. Suppo
 │   │   └── mouse.dtsi         # Pointing/mouse config
 │   └── layouts/
 │       └── XX-keys.h          # Physical→logical key mapping macros
-├── build.yaml                 # Build matrix (CI + local)
-├── build-all.sh               # Local build via Podman
+├── cornix.yaml                # Build matrix per keyboard (50 keys)
+├── totem.yaml                 # Build matrix per keyboard (38 keys)
+├── forager.yaml               # Build matrix per keyboard (34 keys)
+├── build-all.sh               # Local build via Podman (reads the matrices)
+├── .tekton/                   # CI entry points for Pipelines-as-Code
+│   ├── firmware.yaml          # push main + v* tags -> build + release
+│   └── firmware-pr.yaml       # PRs -> build only (no release)
+├── ci/
+│   ├── tekton/pipeline.yaml   # Tekton Pipeline used by both
+│   ├── build-firmware.sh      # Build logic (runs in the ZMK image)
+│   └── publish-release.sh     # Uploads .uf2 to a Forgejo release
 └── zmk/, zephyr/, modules/    # Dependencies (DON'T EDIT)
 ```
 
@@ -56,7 +65,7 @@ Multi-keyboard ZMK firmware config using **Key-Count-Based Architecture**. Suppo
 | Add macro | `config/includes/macros.dtsi` | |
 | Keyboard-specific tweaks | `config/includes/XX-keys/base.dtsi` | Layout adapter per key count |
 | Enable feature | `config/default.conf` or `config/<keyboard>.conf` | |
-| Add build target | `build.yaml` AND `build-all.sh` | MUST sync both |
+| Add build target | `<keyboard>.yaml` | Same matrix feeds local build, CI and PR check |
 
 ## BUILD COMMANDS
 ```bash
@@ -73,9 +82,10 @@ dtc -I dts -O dtb <file>.dtsi
 
 ## LOCAL TESTING WORKFLOW
 To test firmwares locally without waiting for the full build:
-1.  Edit `build.yaml` to comment out all keyboards except the one you want to test.
+1.  Edit the matrix of the keyboard you want to test (`cornix.yaml`,
+    `totem.yaml`, `forager.yaml`) and comment out the targets you don't need.
 2.  Run `bash build-all.sh`.
-3.  Once verified, comment out that keyboard, uncomment the next one, and run `bash build-all.sh` again.
+3.  Once verified, restore the entries before committing.
 4.  Repeat until all necessary keyboards have been tested.
 
 ## CONVENTIONS
@@ -102,14 +112,20 @@ To test firmwares locally without waiting for the full build:
 | Edit `*.keymap` directly | They're stubs; edit `includes/layers.dtsi` |
 | Edit zmk/, zephyr/, modules/ | Dependencies; changes will be lost |
 | Edit external modules from `config/west.yml` | External dependencies: `zmk`, `zmk-keyboard-cornix`, `zmk-helpers`, `zmk-dongle-display`, `forager-zmk-module`, `zmk-rgbled-widget`, `zmk-config-totem`. These are cloned by `west update` and MUST NOT be modified |
-| Change `build.yaml` without `build-all.sh` | MUST stay in sync |
+| Change a build target in `<keyboard>.yaml` without checking CI | The same matrix drives the local build and the Forgejo pipeline |
+| Edit `ci/build-firmware.sh` without keeping `build-all.sh` in sync | Both encode the same west invocation; drift = local builds pass, CI fails (or the reverse) |
 | Git operations without asking | NO commit/push unless user requests |
 | Assume build succeeded | WAIT for exit code 0 |
 
-## GITHUB ACTIONS
-- **URL**: https://github.com/frieser/zmk-config/actions
-- **Post-push**: MUST verify workflow succeeds (green check)
-- **On failure**: Analyze logs → fix → commit → push → re-verify
+## CI — FORGEJO + TEKTON (PIPELINES-AS-CODE)
+- **Repo**: https://forge.homelab.frieserlabs.dev/frieser/zmk-config (private). GitHub is a mirror only.
+- **Runs**: https://forge.homelab.frieserlabs.dev/frieser/zmk-config/actions (or `kubectl -n ci-build get pipelinerun`)
+- **Trigger**: push to `main` or a `v*` tag builds every matrix and publishes a release; a PR builds only.
+- **Releases**: tag `firmware-<shortsha>` (or the pushed `v*` tag) with the `.uf2` files attached.
+- **Pipeline**: `.tekton/*.yaml` → `ci/tekton/pipeline.yaml` (one Task, three steps: clone → build → publish, sharing an emptyDir).
+- **Post-push**: MUST verify the PipelineRun succeeds.
+- **On failure**: `kubectl -n ci-build logs pipelinerun/<name> --all-containers` → fix → push → re-verify.
+- The old `.github/workflows/*` stay for the GitHub mirror; Forgejo does NOT run them.
 
 ## NOTES
 - **Build time**: `build-all.sh` takes 10-15+ minutes

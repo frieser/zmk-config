@@ -1,0 +1,38 @@
+# Pull-request validation for the keyboard config (Pipelines-as-Code).
+#
+# Same pipeline as the release build, with `publish=false`: it proves the keymap
+# compiles before merge and leaves the .uf2 files in the workspace only. This is
+# what replaces the GitHub reusable workflow `build-user-config.yml`, which
+# Forgejo cannot use (no cross-repo reusable workflows).
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: zmk-firmware-pr-
+  labels:
+    app.kubernetes.io/part-of: zmk-config
+    app.kubernetes.io/component: firmware-build
+  annotations:
+    pipelinesascode.tekton.dev/on-event: "[pull_request]"
+    pipelinesascode.tekton.dev/on-target-branch: "[main]"
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/max-keep-runs: "3"
+    pipelinesascode.tekton.dev/pipeline: "ci/tekton/pipeline.yaml"
+spec:
+  taskRunTemplate:
+    serviceAccountName: ci-build-runner
+    podTemplate:
+      priorityClassName: homelab-medium
+  params:
+    - name: repo-url
+      value: "{{ repo_url }}"
+    - name: revision
+      value: "{{ revision }}"
+    - name: target-branch
+      value: "{{ target_branch }}"
+    - name: publish
+      value: "false"
+  workspaces:
+    - name: source
+      emptyDir: {}
+  timeouts:
+    pipeline: 75m0s

@@ -1,0 +1,49 @@
+# Push-triggered firmware build (Pipelines-as-Code).
+#
+# Triggers:
+#   - push to `main`
+#   - push of a `v*` tag (that tag names the release instead of firmware-<sha>)
+#
+# Deleted refs also arrive as `push`; Forgejo sends `after` as the null SHA for
+# those, and the PipelineRun would be doomed (nothing to check out), so the null
+# SHA is filtered in the CEL expression. `on-cel-expression` is used alone
+# because PaC gives it precedence over on-event/on-target-branch and warns when
+# both are present.
+#
+# First run: this file must be reachable at the SHA of the triggering event —
+# PaC reads it from there, not from `main` — so it only fires for pushes made
+# after it lands.
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: zmk-firmware-
+  labels:
+    app.kubernetes.io/part-of: zmk-config
+    app.kubernetes.io/component: firmware-build
+  annotations:
+    pipelinesascode.tekton.dev/on-cel-expression: >-
+      event == 'push' &&
+      (target_branch == 'refs/heads/main' || target_branch.startsWith('refs/tags/v')) &&
+      body.after != '0000000000000000000000000000000000000000'
+    pipelinesascode.tekton.dev/cancel-in-progress: "true"
+    pipelinesascode.tekton.dev/max-keep-runs: "10"
+    pipelinesascode.tekton.dev/pipeline: "ci/tekton/pipeline.yaml"
+spec:
+  taskRunTemplate:
+    serviceAccountName: ci-build-runner
+    podTemplate:
+      priorityClassName: homelab-medium
+  params:
+    - name: repo-url
+      value: "{{ repo_url }}"
+    - name: revision
+      value: "{{ revision }}"
+    - name: target-branch
+      value: "{{ target_branch }}"
+    - name: publish
+      value: "true"
+  workspaces:
+    - name: source
+      emptyDir: {}
+  timeouts:
+    pipeline: 75m0s
