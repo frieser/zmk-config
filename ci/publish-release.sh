@@ -66,7 +66,10 @@ for FILE in "$OUT_DIR"/*/*.uf2; do
   ASSET="$KEYBOARD-$(basename "$FILE")"
   # A re-run for the same tag hits "asset already exists" (409): delete and
   # re-upload so the release always matches the build that just finished.
-  OLD=$(curl -sS -H "$AUTH" "$API/releases/$ID/assets?name=$ASSET" | jq -r '.id // empty')
+  # The assets endpoint answers with an ARRAY (`.id` on it errors out), so pick
+  # the entry by name instead of assuming an object.
+  OLD=$(curl -sS -H "$AUTH" "$API/releases/$ID/assets" \
+    | jq -r --arg n "$ASSET" 'if type == "array" then (map(select(.name == $n))[0].id // empty) else (.id // empty) end')
   if [ -n "$OLD" ]; then
     curl -sS -o /dev/null -X DELETE -H "$AUTH" "$API/releases/$ID/assets/$OLD"
   fi
