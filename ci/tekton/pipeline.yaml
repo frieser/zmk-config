@@ -18,6 +18,11 @@
 #           RWO, so two builds (e.g. a push and a PR) cannot overlap: the second
 #           pod waits for the volume. Acceptable for a firmware repo.
 #
+# Tekton mounts every workspace into every step under /workspace/<name>, so the
+# steps must NOT declare volumeMounts for them: doing so fails the TaskRun with
+# "workspace mount path ... must be unique". The build step just reads
+# `$(workspaces.cache.path)` through CACHE_DIR.
+#
 # Image: zmkfirmware/zmk-build-arm:3.5-branch — same one build-all.sh uses with
 # podman locally, so the toolchain (west, arm-zephyr-eabi, PyYAML) is identical
 # on the laptop and in the cluster.
@@ -110,9 +115,6 @@ spec:
                 value: "4"
               - name: CACHE_DIR
                 value: $(workspaces.cache.path)
-            volumeMounts:
-              - name: cache
-                mountPath: $(workspaces.cache.path)
             computeResources:
               requests:
                 cpu: 500m
