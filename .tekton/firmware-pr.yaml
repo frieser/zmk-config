@@ -35,6 +35,12 @@ spec:
       value: "{{ target_branch }}"
     - name: publish
       value: "false"
+    # A PR only validates what it touches: select-matrices maps the diff to the
+    # matrices to build, and the reset images (keymap-independent) are skipped.
+    - name: selective
+      value: "true"
+    - name: no-resets
+      value: "true"
   workspaces:
     - name: source
       emptyDir: {}

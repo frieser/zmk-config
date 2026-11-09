@@ -1,4 +1,7 @@
 ---
+# NOTE: `alias-of` is understood by ci/build-firmware.sh and build-all.sh only.
+# It copies the named artifact's .uf2 under this artifact name instead of
+# compiling an identical image a second time.
 include:
   # Forager keyboards
   - board: seeeduino_xiao_ble
@@ -19,12 +22,11 @@ include:
     snippet: studio-rpc-usb-uart nrf52840-nosd
     artifact-name: forager_dongle_nosd
 
-  # Reset shields
+  # Reset shields: this one is the canonical seeeduino_xiao_ble reset image
+  # (totem_reset aliases it); settings_reset never reads the keymap.
   - board: seeeduino_xiao_ble
     shield: settings_reset
     artifact-name: forager_reset
 
-  - board: nice_nano_v2
-    shield: settings_reset
-    snippet: studio-rpc-usb-uart nrf52840-nosd
+  - alias-of: cornix_dongle_reset_nosd
     artifact-name: forager_dongle_reset_nosd

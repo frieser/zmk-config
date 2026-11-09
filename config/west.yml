@@ -28,12 +28,20 @@ manifest:
     - name: zmk-dongle-display
       remote: hitsmaxft
       revision: 6682adc40247dd743f33d57959630fb5249f3ae7
+    # Pinned to the v0.3 tag (2025-12-16) instead of tracking `main`: a build
+    # must not change because upstream moved a branch. v0.3 differs from the
+    # previous main commit (3cafe6b, 2024-11-17) only in README.md, so the
+    # pin changes no shield, no module.yml and no Kconfig.
     - name: forager-zmk-module
       remote: carrefinho
-      revision: main
+      revision: v0.3
     - name: zmk-rgbled-widget
       remote: caksoylar
       revision: v0.3
-    - name: zmk-config-totem
-      remote: GEIGEIGEIST
-      revision: master
+    # zmk-config-totem is NOT a ZMK module: the repo has no zephyr/module.yml
+    # (west cloned it, but Zephyr never added it as a module), and its shield
+    # definition is already kept in this repo at config/boards/shields/totem/
+    # (verified: `diff -rq` against the external copy shows only totem.zmk.yml,
+    # a hardware-metadata file that the build never reads - and that .gitignore
+    # could not even track, see the `*zmk*` pattern). The project was removed so
+    # `west update` stops cloning a dead 2023 repo.

@@ -1,4 +1,7 @@
 ---
+# NOTE: `alias-of` is understood by ci/build-firmware.sh and build-all.sh only.
+# GitHub's build.yaml format does not support it, and this repo does not use
+# build.yaml (see AGENTS.md: Forgejo + Tekton is the CI).
 include:
   # Cornix keyboards
   - board: cornix_left
@@ -16,6 +19,8 @@ include:
     artifact-name: cornix_dongle_nosd
 
   # Reset shields
+  # This one is the canonical nice_nano_v2 reset image: the totem and forager
+  # dongle resets are byte-identical, so they alias it instead of rebuilding it.
   - board: cornix_right
     shield: settings_reset
     artifact-name: cornix_reset

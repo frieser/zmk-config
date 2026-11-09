@@ -5,16 +5,19 @@
 # Keeping it here (instead of the GitOps repo) means the CI of the keyboard
 # config evolves in the same commit as the keymaps it builds.
 #
-# Why one Task with three steps instead of three Tasks: the `source` workspace
-# is an emptyDir, i.e. a directory of a single Tekton pod. Splitting the build
-# from the release into separate TaskRuns would create a second pod and lose the
-# .uf2 files in between.
+# Why one Task with four steps instead of four Tasks: the `source` workspace is
+# an emptyDir, i.e. a directory of a single Tekton pod. Splitting the build from
+# the release into separate TaskRuns would create a second pod and lose the .uf2
+# files in between.
 #
 # Workspaces:
-#   source  emptyDir: clone + pristine build trees + collected .uf2. Thrown away.
-#   cache   PVC zmk-west-cache: only the west workspace (zephyr + zmk + modules,
-#           ~3 GiB). `west update` is ~5 min of every build, and the upstream
-#           refs barely move, so keeping them pays off from the second run on.
+#   source  emptyDir: clone + collected .uf2. Thrown away.
+#   cache   PVC zmk-west-cache: the west workspace (zephyr + zmk + modules,
+#           ~3 GiB) AND the build trees ($CACHE_DIR/ws/builds, see
+#           ci/build-firmware.sh). `west update` is ~5 min of every build, and
+#           the upstream refs barely move, so keeping them pays off from the
+#           second run on; the build trees then make ninja reuse objects, so
+#           only the targets whose sources changed recompile.
 #           RWO, so two builds (e.g. a push and a PR) cannot overlap: the second
 #           pod waits for the volume. Acceptable for a firmware repo.
 #
@@ -49,11 +52,23 @@ spec:
       description: Create/update a Forgejo release with the .uf2 files.
       type: string
       default: "false"
+    - name: selective
+      description: >-
+        Build only the matrices affected by the changed files (PR runs). When
+        "false" every matrix is built (push/tag runs).
+      type: string
+      default: "false"
+    - name: no-resets
+      description: >-
+        Skip settings_reset targets. They do not depend on the keymap, so a PR
+        validation does not need to rebuild them.
+      type: string
+      default: "false"
   workspaces:
     - name: source
-      description: Clone + pristine build trees + collected firmware (emptyDir).
+      description: Clone + collected firmware (emptyDir).
     - name: cache
-      description: Persistent west workspace, mountable by one build at a time.
+      description: Persistent west workspace and build trees, mountable by one build at a time.
   tasks:
     - name: firmware
       params:
@@ -65,6 +80,10 @@ spec:
           value: $(params.target-branch)
         - name: publish
           value: $(params.publish)
+        - name: selective
+          value: $(params.selective)
+        - name: no-resets
+          value: $(params.no-resets)
       workspaces:
         - name: source
           workspace: source
@@ -77,6 +96,8 @@ spec:
           - name: revision
           - name: target-branch
           - name: publish
+          - name: selective
+          - name: no-resets
         workspaces:
           - name: source
           - name: cache
@@ -105,16 +126,99 @@ spec:
               git -c advice.detachedHead=false checkout --quiet "$REVISION"
               echo "checked out $(git rev-parse --short HEAD) ($(git log -1 --pretty=%s))"
 
+          # Which matrices must this run build? For a PR: only the ones the diff
+          # touches. For a push: all of them. The answer goes to
+          # $SOURCE/.ci-matrices.txt, one matrix file name per line, or the
+          # single word `all`; an empty file means "nothing to build".
+          - name: select-matrices
+            image: alpine/git:v2.54.0
+            workingDir: $(workspaces.source.path)
+            env:
+              - name: SELECTIVE
+                value: $(params.selective)
+              - name: TARGET_BRANCH
+                value: $(params.target-branch)
+            script: |
+              #!/usr/bin/env sh
+              set -eu
+              OUT_FILE="$(workspaces.source.path)/.ci-matrices.txt"
+              : > "$OUT_FILE"
+              if [ "$SELECTIVE" != "true" ]; then
+                echo "selective=false: build every matrix"
+                exit 0
+              fi
+              BASE_BRANCH="${TARGET_BRANCH#refs/heads/}"
+              BASE_BRANCH="${BASE_BRANCH#origin/}"
+              if ! git rev-parse --verify --quiet "origin/$BASE_BRANCH" >/dev/null; then
+                git fetch --quiet --no-tags origin \
+                  "+refs/heads/$BASE_BRANCH:refs/remotes/origin/$BASE_BRANCH" || true
+              fi
+              BASE=""
+              if git rev-parse --verify --quiet "origin/$BASE_BRANCH" >/dev/null; then
+                BASE="$(git merge-base HEAD "origin/$BASE_BRANCH" 2>/dev/null || true)"
+              fi
+              if [ -z "$BASE" ]; then
+                echo "cannot resolve the merge base with $BASE_BRANCH: building every matrix"
+                echo all >> "$OUT_FILE"
+                cat "$OUT_FILE"
+                exit 0
+              fi
+              echo "diffing against $BASE_BRANCH ($BASE)"
+              CHANGED="$(git diff --name-only "$BASE" HEAD)"
+              if [ -z "$CHANGED" ]; then
+                echo "no files changed: nothing to build"
+                exit 0
+              fi
+              all=0 cornix=0 totem=0 forager=0
+              # Word splitting is fine: no path in this repo contains a space.
+              for f in $CHANGED; do
+                case "$f" in
+                  # Shared by every keyboard, or the build machinery itself.
+                  config/includes/layers.dtsi|config/includes/behaviours.dtsi|\
+                  config/includes/combos.dtsi|config/includes/macros.dtsi|\
+                  config/includes/mouse.dtsi|config/layouts/*|config/west.yml|\
+                  config/default.conf|config/zephyr/*|ci/*|.tekton/*|\
+                  build-all.sh|cornix.yaml|totem.yaml|forager.yaml)
+                    all=1 ;;
+                  config/cornix*.keymap|config/cornix*.conf) cornix=1 ;;
+                  config/includes/50-keys/*) cornix=1 ;;
+                  config/boards/shields/cornix*/*) cornix=1 ;;
+                  config/totem*.keymap|config/totem*.conf) totem=1 ;;
+                  config/includes/38-keys/*) totem=1 ;;
+                  config/boards/shields/totem*/*) totem=1 ;;
+                  config/forager*.keymap|config/forager*.conf) forager=1 ;;
+                  config/includes/34-keys/*) forager=1 ;;
+                  config/boards/shields/forager*/*) forager=1 ;;
+                  # urchin has no matrix: its keymap is not built by CI today.
+                  config/urchin*.keymap|config/urchin*.conf) ;;
+                  # Anything else under config/ is unknown to this map: be safe.
+                  config/*) all=1 ;;
+                  # Docs, .github, .opencode...: no firmware impact.
+                  *) ;;
+                esac
+              done
+              if [ "$all" = "1" ]; then
+                echo all >> "$OUT_FILE"
+              else
+                if [ "$cornix" = "1" ]; then echo cornix.yaml >> "$OUT_FILE"; fi
+                if [ "$totem" = "1" ]; then echo totem.yaml >> "$OUT_FILE"; fi
+                if [ "$forager" = "1" ]; then echo forager.yaml >> "$OUT_FILE"; fi
+              fi
+              echo "matrices to build:"
+              if [ -s "$OUT_FILE" ]; then cat "$OUT_FILE"; else echo "  (none)"; fi
+
           - name: build
             image: zmkfirmware/zmk-build-arm:3.5-branch
             workingDir: $(workspaces.source.path)
             env:
               - name: HOME
                 value: /root
-              - name: ZMK_BUILD_JOBS
-                value: "4"
               - name: CACHE_DIR
                 value: $(workspaces.cache.path)
+              - name: SELECTIVE
+                value: $(params.selective)
+              - name: NO_RESETS
+                value: $(params.no-resets)
             computeResources:
               requests:
                 cpu: 500m
@@ -127,7 +231,34 @@ spec:
               set -euo pipefail
               export PATH="/root/.local/bin:${PATH}"
               echo "west: $(west --version 2>/dev/null || echo missing)"
-              bash ci/build-firmware.sh "$(workspaces.source.path)" "$(workspaces.source.path)/out"
+              SRC="$(workspaces.source.path)"
+              OUT="$SRC/out"
+              mkdir -p "$OUT"
+              FLAGS=()
+              if [ "$NO_RESETS" = "true" ]; then
+                FLAGS+=(--no-resets)
+              fi
+              MATRICES=()
+              if [ "$SELECTIVE" = "true" ]; then
+                if [ -f "$SRC/.ci-matrices.txt" ]; then
+                  mapfile -t SELECTED < "$SRC/.ci-matrices.txt" || true
+                else
+                  SELECTED=()
+                fi
+                if [ ${#SELECTED[@]} -eq 0 ]; then
+                  echo "no affected matrices: nothing to build"
+                  exit 0
+                fi
+                for m in ${SELECTED[@]+"${SELECTED[@]}"}; do
+                  if [ "$m" = "all" ]; then
+                    MATRICES=()
+                    break
+                  fi
+                  MATRICES+=("$m")
+                done
+              fi
+              bash ci/build-firmware.sh "$SRC" "$OUT" \
+                ${FLAGS[@]+"${FLAGS[@]}"} ${MATRICES[@]+"${MATRICES[@]}"}
 
           - name: publish
             image: alpine:3.20
@@ -153,7 +284,7 @@ spec:
               set -eu
               if [ "$PUBLISH" != "true" ]; then
                 echo "publish=false (validation run): firmware kept in the workspace only"
-                ls -R out | head -40
+                ls -R out 2>/dev/null | head -40 || true
                 exit 0
               fi
               apk add --no-cache curl jq >/dev/null

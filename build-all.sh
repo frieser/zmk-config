@@ -1,125 +1,108 @@
 #!/usr/bin/env bash
-
+# Local build of the firmware matrices, inside the same image CI uses.
+#
+# Usage: build-all.sh [--clean] [--no-resets] [matrix.yaml ...]
+#
+#   --clean        remove .west, builds/ and firmwares/ first. Without it the
+#                  west workspace and the build trees are reused, so a second run
+#                  only recompiles what changed (ninja), like CI does.
+#   --no-resets    skip the settings_reset targets, exactly like a PR build
+#                  (see ci/build-firmware.sh). Handy to check the PR path locally.
+#   matrix.yaml    optional subset, e.g. `build-all.sh totem.yaml`. Without it
+#                  every matrix is built (cornix, totem, forager).
+#
+# After a successful run this script prunes the .uf2 files of the built matrices
+# that no longer belong to an artifact (renamed or deleted target). Otherwise an
+# old file would sit next to the fresh ones and could be flashed by mistake.
+# Nothing is pruned when the build fails, and the pruning never leaves this
+# script: CI (ci/build-firmware.sh) is untouched.
+#
+# The build itself is ci/build-firmware.sh - the very script the Tekton pipeline
+# runs - so local and CI behaviour cannot drift. Keep them in sync by keeping
+# this file thin: it only adds podman, the ./firmwares output directory and the
+# stale-file cleanup.
 set -euo pipefail
 
-rm -rf .west
+CLEAN=0
+NO_RESETS=0
+MATRICES=()
+for arg in "$@"; do
+  case "$arg" in
+    --clean) CLEAN=1 ;;
+    --no-resets) NO_RESETS=1 ;;
+    --) ;;
+    -h|--help)
+      echo "usage: build-all.sh [--clean] [--no-resets] [matrix.yaml ...]"
+      exit 0
+      ;;
+    -*)
+      echo "build-all.sh: unknown option $arg" >&2
+      exit 2
+      ;;
+    *) MATRICES+=("$arg") ;;
+  esac
+done
+
+if [ "$CLEAN" = "1" ]; then
+  echo "🧹 Removing .west, builds/ and firmwares/"
+  rm -rf .west builds firmwares
+fi
+
+# Resolve the default matrix list here (not only in the container) so the stale
+# cleanup below knows exactly which matrices this run produced.
+if [ ${#MATRICES[@]} -eq 0 ]; then
+  MATRICES=(cornix.yaml totem.yaml forager.yaml)
+fi
+
+FLAGS=()
+if [ "$NO_RESETS" = "1" ]; then
+  FLAGS+=(--no-resets)
+fi
+
+# -t only when there is a terminal, otherwise `podman run -it` fails in scripts
+# and in CI-like environments.
+PODMAN_ARGS=(--rm --security-opt label=disable -i)
+if [ -t 1 ]; then
+  PODMAN_ARGS+=(-t)
+fi
 
 echo "🐳 Launching podman container for ZMK build..."
-
-podman run -it --rm --security-opt label=disable \
+podman run "${PODMAN_ARGS[@]}" \
   --workdir /zmk-config \
   -v "$(pwd)":/zmk-config \
   zmkfirmware/zmk-build-arm:3.5-branch \
-  /bin/bash -c "
-set -euo pipefail
+  /bin/bash -c 'exec bash ci/build-firmware.sh /zmk-config /zmk-config/firmwares "$@"' \
+  zmk-build ${FLAGS[@]+"${FLAGS[@]}"} ${MATRICES[@]+"${MATRICES[@]}"}
 
-ZMK_APP_PATH='zmk/app'
-BUILD_DIR='builds'
+# Only reached when podman (and therefore the build) succeeded: set -e aborts
+# above on any failure, so a broken build never loses the previous .uf2 files.
+prune_stale_firmwares() {
+  local matrix keyboard expected file artifact removed=0
+  for matrix in "${MATRICES[@]}"; do
+    keyboard="$(basename "$matrix" .yaml)"
+    [ -d "firmwares/$keyboard" ] || continue
+    # The .uf2 file names of this matrix, read from the same file the build read.
+    expected="$(grep -E '^[[:space:]]*artifact-name:' "$matrix" 2>/dev/null \
+      | sed -E 's/^[[:space:]]*artifact-name:[[:space:]]*//; s/[[:space:]]+$//; s/$/.uf2/')" || true
+    for file in "firmwares/$keyboard"/*.uf2; do
+      [ -f "$file" ] || continue
+      artifact="$(basename "$file")"
+      if ! printf '%s\n' "$expected" | grep -qxF -- "$artifact"; then
+        echo "🧹 stale: $file (no such artifact in $matrix)"
+        rm -f "$file"
+        removed=$((removed + 1))
+      fi
+    done
+    # Drop the directory if the matrix lost every artifact.
+    rmdir "firmwares/$keyboard" 2>/dev/null || true
+  done
+  if [ "$removed" -eq 0 ]; then
+    echo "🧹 no stale .uf2 files"
+  else
+    echo "🧹 removed $removed stale .uf2 file(s)"
+  fi
+}
 
-echo '🔧 Initializing west workspace...'
-west init -l config
-west update
-west zephyr-export
+prune_stale_firmwares
 
-echo '🛠️  Building firmware targets...'
-
-python3 << 'PYTHON_SCRIPT'
-import yaml
-import subprocess
-import sys
-import shutil
-import os
-
-YAML_FILES = ['cornix.yaml', 'totem.yaml', 'forager.yaml']
-BASE_FIRMWARE_OUT = '/zmk-config/firmwares'
-BUILDS_DIR = '/zmk-config/builds'
-
-if os.path.exists(BASE_FIRMWARE_OUT):
-    shutil.rmtree(BASE_FIRMWARE_OUT)
-
-if os.path.exists(BUILDS_DIR):
-    shutil.rmtree(BUILDS_DIR)
-
-subprocess.run(['west', 'zephyr-export'], cwd='/zmk-config', check=True)
-
-for yaml_file in YAML_FILES:
-    keyboard_name = yaml_file.replace('.yaml', '')
-    yaml_path = f'/zmk-config/{yaml_file}'
-    
-    if not os.path.exists(yaml_path):
-        print(f'⚠️  Skipping {yaml_file} (not found)')
-        continue
-    
-    print(f'\n📦 Building {keyboard_name}...')
-    
-    with open(yaml_path, 'r') as f:
-        config = yaml.safe_load(f)
-    
-    firmware_out = os.path.join(BASE_FIRMWARE_OUT, keyboard_name)
-    os.makedirs(firmware_out, exist_ok=True)
-    
-    for target in config.get('include', []):
-        board = target['board']
-        artifact = target['artifact-name']
-        shield = target.get('shield', '')
-        snippet = target.get('snippet', '')
-        
-        cmd = [
-            'west', 'build', '-s', 'zmk/app',
-            '-p',
-            '-b', board,
-            '-d', f'builds/{artifact}'
-        ]
-        
-        if snippet:
-            for s in snippet.split():
-                cmd.extend(['-S', s])
-        
-        extra_args = []
-        if shield:
-            extra_args.append(f'-DSHIELD={shield}')
-        
-        if 'settings_reset' not in shield:
-            extra_args.append('-DZMK_CONFIG=/zmk-config/config')
-        
-        cmake_args = target.get('cmake-args', '')
-        if cmake_args:
-            import shlex
-            for arg in shlex.split(cmake_args):
-                if arg.startswith('-D'):
-                    fixed_arg = arg.replace('../../', '/zmk-config/')
-                    extra_args.append(fixed_arg)
-        
-        if extra_args:
-            cmd.append('--')
-            cmd.extend(extra_args)
-        
-        print(f'Building: {artifact}')
-        print(f'  Board: {board}')
-        print(f'  Shield: {shield}')
-        
-        result = subprocess.run(cmd, cwd='/zmk-config')
-        if result.returncode != 0:
-            print(f'❌ Failed to build {artifact}')
-            sys.exit(1)
-        else:
-            print(f'✅ Built: {artifact}')
-        
-        build_path = f'/zmk-config/builds/{artifact}/zephyr/zmk.uf2'
-        if os.path.exists(build_path):
-            dst = os.path.join(firmware_out, f'{artifact}.uf2')
-            shutil.copy2(build_path, dst)
-            print(f'✅ Copied: {artifact}.uf2 -> {keyboard_name}/')
-
-print('\n📦 All firmwares collected:')
-for keyboard in YAML_FILES:
-    name = keyboard.replace('.yaml', '')
-    folder = os.path.join(BASE_FIRMWARE_OUT, name)
-    if os.path.exists(folder):
-        print(f'\n{name}/')
-        for f in sorted(os.listdir(folder)):
-            print(f'  {f}')
-PYTHON_SCRIPT
-
-echo '🎉 All builds completed successfully!'
-"
+echo '🎉 Firmwares in ./firmwares/<matrix>/'

@@ -46,6 +46,12 @@ spec:
       value: "{{ target_branch }}"
     - name: publish
       value: "true"
+    # A push must ship the complete firmware set, so nothing is filtered and the
+    # reset images are built too.
+    - name: selective
+      value: "false"
+    - name: no-resets
+      value: "false"
   workspaces:
     - name: source
       emptyDir: {}
