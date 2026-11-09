@@ -1,0 +1,11 @@
+/* Cornix (50 keys) - Symbol_layer.  Assembled by ../../keymap.dtsi. */
+        Symbol_layer {
+            display-name = "Symbols";
+            bindings = <LAYER_FROM50( \
+&none,  &kp GRAVE,  &kp ASTRK,  &kp EQUAL,  &kp EXCL,  &kp CARET,                  &kp SQT,    &kp DQT,      &kp PRCNT,  &kp BSLH,   &kp TILDE,  &kp PIPE,
+&none,  &kp N0,     &kp LBKT,   &kp LBRC,   &kp LPAR,  &kp UNDER,                  &kp MINUS,  &kp RPAR,     &kp RBRC,   &kp RBKT,   &kp DLLR,   &kp SQT,
+&none,  &kp HASH,   &kp AMPS,   &kp AT,     &kp LT,    &kp FSLH,   &trans,  &trans,  &kp EQUAL,  &kp GT,       &kp COMMA,  &kp DOT,    &kp SEMI,   &none,
+&none,  &none,      &none,      &none,      &trans,    &kp TAB,                     &trans,     &trans,       &trans,     &none,      &none,      &none
+            )>;
+            sensor-bindings = <&inc_dec_kp K_VOL_UP K_VOL_DN &inc_dec_kp PG_UP PG_DN>;
+        };

@@ -1,0 +1,23 @@
+/*
+ * Shared keymap assembly: the single place that fixes the layer order.
+ *
+ * Every family base.dtsi defines ZMK_KEYMAP_LAYER_<LAYER> to the path of its
+ * own slice in ../layers/<N>-keys/ and then includes this file. The slice
+ * paths are macro-expanded #include operands, so they resolve relative to this
+ * file (config/includes/).
+ *
+ * Layer index == order of the nodes below. layers.dtsi holds the matching
+ * #define names (BASE, SYMBOL, NAVI, NUM, MACRO, DEBUG); keep the two in step.
+ */
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+
+#include ZMK_KEYMAP_LAYER_BASE
+#include ZMK_KEYMAP_LAYER_SYMBOL
+#include ZMK_KEYMAP_LAYER_NAVI
+#include ZMK_KEYMAP_LAYER_NUMPAD
+#include ZMK_KEYMAP_LAYER_MACRO
+#include ZMK_KEYMAP_LAYER_DEBUG
+    };
+};

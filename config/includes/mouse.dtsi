@@ -3,10 +3,7 @@
 
 #define ZMK_POINTING_DEFAULT_SCRL_VAL 100   // default: 10
 #define ZMK_POINTING_DEFAULT_MOVE_VAL 1200  // default: 600
-#define HM_TAPPING_TERM               250
-#define HM_TAPPING_REPEAT             210
-#define HM_TAPPING_TERM_FAST          200
-#define HM_PRIOR_IDLE                 70
+// HM_TAPPING_* / HM_PRIOR_IDLE live in behaviours.dtsi (single definition).
 
 &mmv {
     acceleration-exponent = <1>;      // 1

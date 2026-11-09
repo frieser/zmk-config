@@ -1,0 +1,27 @@
+/*
+ * Shared include contract for every key-count family.
+ *
+ * Include order is significant:
+ *   1. the family layout header (layouts/<N>-keys.h) MUST come first, because
+ *      behaviours.dtsi below uses KEYS_L / KEYS_R / THUMBS;
+ *   2. this file then pulls in the dt-bindings, the layer indices and the
+ *      shared layer/behaviour sources.
+ *
+ * So a family base.dtsi is:
+ *      #include "../../layouts/<N>-keys.h"
+ *      #include "../common.dtsi"
+ *      <its own keymap node>
+ */
+#include <behaviors.dtsi>
+#include "zmk-helpers/helper.h"
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/ext_power.h>
+#include <dt-bindings/zmk/pointing.h>
+
+#include "layers.dtsi"
+#include "mouse.dtsi"
+#include "macros.dtsi"
+#include "combos.dtsi"
+#include "behaviours.dtsi"

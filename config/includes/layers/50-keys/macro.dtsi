@@ -1,0 +1,11 @@
+/* Cornix (50 keys) - Macro_layer.  Assembled by ../../keymap.dtsi. */
+        Macro_layer {
+            display-name = "Macro";
+
+            bindings = <LAYER_FROM50( \
+&none, &none,           &none, &none, &none, &none,               &none, &none, &none, &none, &none,             &none,
+&none, &none,           &none, &none, &none, &none,               &none, &none, &none, &none, &none,             &none,
+&none, &email_macro,    &none, &none, &none, &none, &trans, &trans, &none, &none, &none, &none, &my_user_macro,    &none,
+&none, &none,           &none, &none, &none, &none,               &none, &none, &none, &none, &none,             &none
+            )>;
+        };

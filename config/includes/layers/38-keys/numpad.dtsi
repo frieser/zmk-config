@@ -1,0 +1,10 @@
+/* Totem (38 keys) - KeyPad_layer.  Assembled by ../../keymap.dtsi. */
+        KeyPad_layer {
+            display-name = "NumPad";
+            bindings = <LAYER_FROM38( \
+&kp F12, &td7,      &td8,   &td9,   &kp KP_PLUS,                        &none,           &kp HOME,        &kp PAGE_UP,     &kp INSERT,       &none,            
+&kp F11, &td4,      &td5,   &td6,   &kp KP_MINUS,                       &kp LEFT_ARROW,  &kp DOWN_ARROW,  &kp UP_ARROW,    &kp RIGHT_ARROW,  &none,            
+&none, &td0, &td1,   &td2,   &td3,   &kp KP_MULTIPLY,                    &none,           &kp END,         &kp PAGE_DOWN,   &trans,           &kp C_RESET,      &none,
+                            &td0,  &kp DEL,  &td0,                       &none,           &none,           &none
+            )>;
+        };

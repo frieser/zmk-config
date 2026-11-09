@@ -1,0 +1,11 @@
+/* Forager / Urchin (34 keys) - Debug_layer.  Assembled by ../../keymap.dtsi. */
+        Debug_layer {
+            display-name = "Debug";
+
+            bindings = <LAYER_FROM34( \
+&bt BT_SEL 0,  &bt BT_SEL 1,  &bt BT_SEL 2,  &bt BT_SEL 3,  &bt BT_SEL 4,                  &none,        &out OUT_USB,  &out OUT_TOG,   &out OUT_BLE,  &none,  
+&none,         &none,         &none,         &none,         &none,                         &none,        &none,         &none,          &none,         &none,  
+&none,         &none,         &none,         &none,         &bootloader,                   &bootloader,  &none,         &none,          &none,         &none,  
+                      &none,         &kp N7,         &none,         &none
+            )>;
+        };

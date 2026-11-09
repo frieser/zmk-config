@@ -1,0 +1,10 @@
+/* Totem (38 keys) - Symbol_layer.  Assembled by ../../keymap.dtsi. */
+        Symbol_layer {
+            display-name = "Symbols";
+            bindings = <LAYER_FROM38( \
+&kp GRAVE,  &kp ASTRK,  &kp EQUAL,  &kp EXCL,  &kp CARET,                  &kp SQT,    &kp DQT,      &kp PRCNT,  &kp BSLH,   &kp TILDE,  
+&kp N0,     &kp LBKT,   &kp LBRC,   &kp LPAR,  &kp UNDER,                  &kp MINUS,  &kp RPAR,     &kp RBRC,   &kp RBKT,   &kp DLLR,  
+&none,  &kp HASH,   &kp AMPS,   &kp AT,     &kp LT,    &kp FSLH,           &kp EQUAL,  &kp GT,       &kp COMMA,  &kp DOT,    &kp SEMI,   &none,
+                          &none,      &trans,    &kp TAB,                  &trans,     &trans,       &trans
+            )>;
+        };

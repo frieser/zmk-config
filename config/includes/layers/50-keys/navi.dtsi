@@ -1,0 +1,10 @@
+/* Cornix (50 keys) - Navi_layer.  Assembled by ../../keymap.dtsi. */
+        Navi_layer {
+            display-name = "Navi";
+            bindings = <LAYER_FROM50( \
+&none, &none,  &kp K_PREVIOUS,  &kp K_VOLUME_UP,   &kp K_NEXT,        &none,                  &none,           &mkp MB1,        &msc SCRL_UP,    &mkp MB2,           &none, &none,
+&none, &none,  &mkp MB2,        &kp K_MUTE,        &mkp MB1,          &none,                  &mmv MOVE_LEFT,  &mmv MOVE_DOWN,  &mmv MOVE_UP,    &mmv MOVE_RIGHT,    &none, &none,
+&none, &none,  &mkp MB3,        &kp K_VOLUME_DOWN, &kp K_PLAY_PAUSE,  &none,  &trans,  &trans,  &none,           &msc SCRL_LEFT,  &msc SCRL_DOWN,  &msc SCRL_RIGHT,    &none, &none,
+&none, &none,  &none,           &mkp MB3,          &trans,            &trans,                 &mkp MB1,        &mkp MB2,        &trans,          &none,              &none, &none
+            )>;
+        };
