@@ -18,6 +18,10 @@ metadata:
     pipelinesascode.tekton.dev/max-keep-runs: "3"
     pipelinesascode.tekton.dev/pipeline: "ci/tekton/pipeline.yaml"
 spec:
+  # PaC inlines the Pipeline from the annotation above; validation still requires
+  # a pipelineRef to resolve. Do not remove it.
+  pipelineRef:
+    name: zmk-firmware
   taskRunTemplate:
     serviceAccountName: ci-build-runner
     podTemplate:
